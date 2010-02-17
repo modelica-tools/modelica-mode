@@ -1,6 +1,8 @@
 This directory contains extensions for Emacs supporting Modelica.
-Modelica is a unified object-oriented language for physical systems modeling 
+Modelica is a unified object-oriented language for physical systems modeling
 (see http://www.Modelica.org).
+
+This code has been written for use with Emacs and shares its licensing (See COPYING).
 
 Emacs lisp code
 ===============
@@ -79,7 +81,7 @@ Now start Emacs and open one of the files in your directory.
 
 -> select the menu item <OO-Browser -> Create-or-Load-Env>
 
-It is prompted for the environment name. 
+It is prompted for the environment name.
 -> Choose a name, e.g. hello-world.
 
 It is prompted for the file to store class information in.
@@ -88,7 +90,7 @@ It is prompted for the file to store class information in.
 Now you must choose a language to work with.
 -> select Modelica
 
-Finally specify system and library directories 
+Finally specify system and library directories
 (specify the current directory "." as the only system directory)
 
 Hit RET to specify the code directories for the Environment
@@ -123,13 +125,13 @@ operations are:
         hit the "d" key to show descendants
 
 - obtain information about classes
-   e.g. hit the "i" key to obtain the class location and documentation 
+   e.g. hit the "i" key to obtain the class location and documentation
 
 - view and edit class implementations
    e.g. hit the "v" key to view the implementation of a class
         hit the "e" key to edit the implementation of a class
 
-- view class definition by clicking the Action Key 
+- view class definition by clicking the Action Key
   (shift-left mouse button or shift-middle mouse button)
   over a class name in any buffer showing a Modelica file
 

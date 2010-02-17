@@ -1,27 +1,27 @@
 ;;; modelica-mode.el --- major mode for editing Modelica files
 
+;; Copyright (C) 2010       Dietmar Winkler
 ;; Copyright (C) 1997--2001 Ruediger Franke
 ;; Copyright (C) 1997--2001 Free Software Foundation, Inc.
 
 ;; Keywords: languages, continuous system modeling
 ;; Author:   Ruediger Franke <rfranke@users.sourceforge.net>
 
-;; This code has been written for use with Emacs and shares its licensing. 
+;; This code has been written for use with Emacs and shares its licensing.
 
-;; GNU Emacs is free software; you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 2, or (at your option)
-;; any later version.
+;; GNU Emacs is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
 
-;; GNU Emacs is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
+;; GNU Emacs is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs; see the file COPYING.  If not, write to the Free
-;; Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-;; 02111-1307, USA.
+;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defconst modelica-mode-version "1.4.1")
 
@@ -37,8 +37,8 @@
 ;;      M-s      show all annotations
 ;;      M-h      hide all annotations
 ;;
-;;  - indentation of lines, e.g. 
-;;      TAB      indent current line 
+;;  - indentation of lines, e.g.
+;;      TAB      indent current line
 ;;      M-x C-\  indent current region
 ;;      C-j      indent current line, create a new line, indent it
 ;;               (like TAB ENTER TAB)
@@ -67,7 +67,7 @@
 ;;  - syntax highlighting using font-lock-mode
 ;;
 ;; Current limitations:
-;;  - conditional expessions are only supported on right hand sides of 
+;;  - conditional expessions are only supported on right hand sides of
 ;;    equations; otherwise simple expressions are assumed
 ;;
 ;; Installation:
@@ -111,7 +111,7 @@
 (if mdc-font-lock-keywords
     ()
   (setq mdc-font-lock-keywords
-	(list 
+	(list
 	 (list (concat "\\<"
 		       "\\(do\\|"
 		       "\\(end[ \t\n]+\\(if\\|for\\|wh\\(en\\|ile\\)\\)\\)\\|"
@@ -132,12 +132,12 @@
 		       "\\>")
 	       0 'font-lock-keyword-face)
 	 (list (concat "\\<"
-		       ;(regexp-opt 
+		       ;(regexp-opt
 		       ; '("redeclare" "final" "partial" "replaceable"
 		       ;   "inner" "outer" "encapsulated"
 		       ;   "discrete" "parameter" "constant"
-		       ;   "flow" "input" "output" "external" 
-		       ;   "block" "class" "connector" "function" "model" 
+		       ;   "flow" "input" "output" "external"
+		       ;   "block" "class" "connector" "function" "model"
 		       ;   "package" "record" "type"
 		       ;   "end") t)
 		       "\\(block\\|c\\(lass\\|on\\(nector\\|stant\\)\\)\\|"
@@ -204,10 +204,10 @@
 
 ;;; The mode
 
-(defvar mdc-basic-offset 2 
+(defvar mdc-basic-offset 2
   "*basic offset for indentation in Modelica Mode")
 
-(defvar mdc-comment-offset 3 
+(defvar mdc-comment-offset 3
   "*offset for indentation in comments in Modelica Mode")
 
 (defvar mdc-statement-offset 2
@@ -278,7 +278,7 @@
     ("Indent"
      [" - for comment"           mdc-indent-for-comment t]
      [" - for docstring"         mdc-indent-for-docstring t]
-     ["Newline and indent"       mdc-newline-and-indent 
+     ["Newline and indent"       mdc-newline-and-indent
       :keys "C-j" :active t]
      ["New comment line"         mdc-indent-new-comment-line t]
      )
@@ -410,7 +410,7 @@
   (mdc-indent-line))
 
 (defun mdc-indent-new-comment-line ()
-  "indent-new-comment-line for Modelica mode. The function additionally 
+  "indent-new-comment-line for Modelica mode. The function additionally
    considers documentation strings"
   (interactive)
   (mdc-indent-line)
@@ -460,7 +460,7 @@
   "Calculate indentation for current line;
    assumes point to be over the first non-blank of the line"
   (save-excursion
-    (let ((case-fold-search nil) 
+    (let ((case-fold-search nil)
 	  offset (last-open nil) (save-point (point))
 	  ref-point ref-column)
       (cond
@@ -488,17 +488,17 @@
 	(goto-char save-point) ; needed after check for singele-line comments
 	(setq offset mdc-basic-offset)
 	;; goto left for labels, end's etc.
-	(if (looking-at 
-	     (concat 
+	(if (looking-at
+	     (concat
 	      ; ("algorithm" "elseif" "elsewhen" "end" "equation" "external"
 	      ;  "in" "loop" "protected" "public")
 	      "\\(algorithm\\|e\\(lse\\(if\\|when\\)\\|nd\\|quation\\|"
 	      "xternal\\)\\|in\\|loop\\|p\\(rotected\\|ublic\\)\\)"
 	      "\\>"))
 	    (setq offset (- offset mdc-basic-offset)))
-	(if (and 
-	     (looking-at 
-	      (concat 
+	(if (and
+	     (looking-at
+	      (concat
 	       ; ("else" "then")
 	       "\\(else\\|then\\)"
 	       "\\>"))
@@ -519,14 +519,14 @@
 	      (if (>= (point) save-point)
 		  ;; indent relative to ref-point as new statement starts
 		  (max 0 (+ ref-column offset))
-		;; else add mdc-statement-offset 
+		;; else add mdc-statement-offset
 		;; provided that point is behind ref-point
 		;; and point is not within a begin-like statement
 		(if (and (> (point) ref-point)
 			 (not (and (mdc-forward-begin)
 				   (> (point) save-point))))
 		    (setq offset (+ offset mdc-statement-offset)))
-		(setq last-open 
+		(setq last-open
 			(car (cdr (parse-partial-sexp (point) save-point))))
 		(if (not last-open)
 		    (max 0 (+ ref-column offset))
@@ -603,7 +603,7 @@
 	      (progn
 		(re-search-backward "\\(^\\|[^\\]\\)[\"\n]")
 		(looking-at "\\(^\\|.\\)\""))
-	    (if (not (looking-at "^")) 
+	    (if (not (looking-at "^"))
 		(forward-char 1))
 	    (if within-string
 		(setq within-string nil)
@@ -616,7 +616,7 @@
       within-string)))
 
 (defun mdc-behind-string (&optional move-point)
-  "Check for string concatenation. Return t if only blanks are between point 
+  "Check for string concatenation. Return t if only blanks are between point
    and the preceeding string constant, nil otherwise. Optionally move point
    to the starting double quote of the preceeding string."
   (let ((behind-string nil)
@@ -659,7 +659,7 @@
     (condition-case nil
 	(let ()
 	  (while (progn
-		   (re-search-backward 
+		   (re-search-backward
 		    (concat "\\([^=]:?=[^=]\\)\\|;"))
 		   (mdc-within-comment)))
 	  (if (looking-at ";")
@@ -685,10 +685,10 @@
       (setq ref-point (point))
       (goto-char save-point))
     (while (progn
-	     (re-search-backward 
+	     (re-search-backward
 	      ;; ("]" ")" ";"
 	      ;;  "algorithm" "equation" "external"
-	      ;;  "else" "elseif" "elsewhen" 
+	      ;;  "else" "elseif" "elsewhen"
 	      ;;  "loop" "protected" "public" "then")
 	      (concat
 	       "[\]\);]\\|"
@@ -706,7 +706,7 @@
 			(forward-char 1)
 			(forward-sexp -1)
 			t))
-		  (if (looking-at ";") 
+		  (if (looking-at ";")
 		      (mdc-within-matrix-expression t)
 		    (mdc-within-equation t))))))
     (cond
@@ -744,11 +744,11 @@
   (let ((depth 1))
     (while (>= depth 1)
       (while (progn
-	       (re-search-backward 
-		(concat 
+	       (re-search-backward
+		(concat
 		 "\\<"
-		 ; ("block" "class" "connector" "end" 
-		 ;  "for" "function" "if" "model" "package" 
+		 ; ("block" "class" "connector" "end"
+		 ;  "for" "function" "if" "model" "package"
 		 ;  "record" "type" "when" "while")
 		 "\\(block\\|c\\(lass\\|onnector\\)\\|end\\|"
 		 "f\\(or\\|unction\\)\\|if\\|model\\|package\\|"
@@ -756,7 +756,7 @@
 		 "\\>"))
 	       (or (mdc-within-comment t)
 		   (mdc-short-class-definition)
-		   (mdc-within-string) 
+		   (mdc-within-string)
 		   (mdc-end-ident)
 		   (and (looking-at "if") (mdc-within-equation t)))))
       (if (looking-at "end\\>")
@@ -833,7 +833,7 @@
 (defun mdc-insert-end ()
   "Insert end statement for current block."
   (interactive)
-  (let ((case-fold-search nil) 
+  (let ((case-fold-search nil)
 	indentation (save-point (point)) (block-start nil) (end-ident ""))
     (save-excursion
       (condition-case nil
@@ -974,7 +974,7 @@
   "Move point to beginning of current statement block"
   (interactive)
   (mdc-keep-region-active)
-  (let ((case-fold-search nil) 
+  (let ((case-fold-search nil)
 	(save-point (point)))
     (condition-case nil
 	(progn
@@ -989,7 +989,7 @@
   "Move point to end of current statement block"
   (interactive)
   (mdc-keep-region-active)
-  (let ((case-fold-search nil) 
+  (let ((case-fold-search nil)
 	ident (save-point (point)))
     (condition-case nil
 	(progn
@@ -998,7 +998,7 @@
 	  (mdc-last-unended-begin)
 	  (setq ident (mdc-forward-begin))
 	  (while (progn
-		   (re-search-forward 
+		   (re-search-forward
 		    (concat "\\<end[ \t\n]+" ident "\\>"))
 		   (or
 		    (mdc-within-comment)
@@ -1035,12 +1035,12 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
     (if flag
 	(let ((o (make-overlay from to)))
 	  (overlay-put o 'invisible 'mdc-annotation)
-	  (overlay-put o 'isearch-open-invisible 
+	  (overlay-put o 'isearch-open-invisible
 		       'mdc-isearch-open-invisible)))))
 
 ;; snarfed from outline.el (outline-isearch-open-invisible);
 ;; Function to be set as an outline-isearch-open-invisible' property
-;; to the overlay that makes the outline invisible 
+;; to the overlay that makes the outline invisible
 ;; (see `mdc-flag-region').
 (defun mdc-isearch-open-invisible (overlay) ())
 
@@ -1074,7 +1074,7 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
 (if (not (functionp 'overlay-get))
     (defalias 'overlay-get 'extent-property))
 
-;; test for overlay 
+;; test for overlay
 (if (not (functionp 'overlays-at))
     ;; XEmacs 21.1
     (defun mdc-within-overlay (prop)
