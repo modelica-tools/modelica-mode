@@ -1,0 +1,49 @@
+04/25/01: Release of modelica-mode version 1.4.1
+
+04/25/01: modelica-mode.el, br-mdc.el
+    - don't define read-only or intangible property for hidden annotations
+    - introduce constants mdc-class-keyword and mdc-class-modifier-keyword
+      formerly defined in br-mdc.el
+    - updates and fixes in mdc-indent-line, mdc-calculate-indent,
+      mdc-statement-start, mdc-short-class-definition, mdc-forward-begin
+    - add "." to word characters in mdc-mode-syntax-table
+      (useful for treating names and numbers as words,
+       as opposed to pure idents and integers)
+
+Former history of modelica-mode.el:	
+  04/24/01:
+    - update function mdc-forward-begin for Modelica 1.4
+      (used e.g. by mdc-forward-statement and mdc-show-annotation)
+  04/03/01: release of version 1.4.0 for Modelica 1.4
+    - hide/show of annotations
+      (initial effort made by Mike Tiller)
+    - bug fix in mdc-within-comment
+    - mdc-within-string exploits result of font-lock-mode
+    - extended font-lock support for Modelica 1.4
+    - new move commands
+    - bug fix in mdc-statement-start for first statement of block
+  12/03/97: release of version 1.06
+    - corrected mdc-indent-for-docstring
+  12/02/97: release of version 1.05
+    - initialize comment syntax as proposed by
+      David Kagedal <davidk@lysator.liu.se>
+    - extended commands for writing comments and documentation strings
+    - commands for moving point according to syntax
+    - provide menu bar using easymenu
+  11/27/97: release of version 1.01
+  11/25/97: 
+    - treatment of balanced expressions in mdc-statement-start
+    - make '_' belonging to syntax class word constituent
+    - new mdc-within-string
+  11/18/97: release of version 1.0 for Modelica 1.0
+  11/18/97: 
+    - support for "if" in conditional equations
+    - add "initial", "terminal", "switch" to font-lock-function-name-face 
+  10/30/97: first release of version 1.0b for Modelica 1.0
+
+Former history of mdc-browse.el:	
+  04/12/01: release of version 1.1
+    - synched up with OO-Browser 4.07 and Modelica 1.4 (partly)
+  12/04/97: release of version 1.01
+    - support for Action Key clicking on classes via mdc-to-definition
+  12/03/97: release of version 1.0
