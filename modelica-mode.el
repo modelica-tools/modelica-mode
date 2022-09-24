@@ -393,7 +393,7 @@
 	;; indent docstring
 	(progn
 	  (forward-char 1)
-	  (insert-string deleted)
+	  (insert deleted)
 	  (forward-char (- (1+ (length deleted))))
 	  (mdc-within-string t)
 	  (while (mdc-behind-string t))
@@ -405,7 +405,7 @@
       ;; insert new docstring
       (forward-char 1)
       (indent-to (max comment-column (1+ (current-column))))
-      (insert-string (concat "\"\"" deleted))
+      (insert (concat "\"\"" deleted))
       (forward-char (- (1+ (length deleted))))))
   (mdc-indent-line))
 
