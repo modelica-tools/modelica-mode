@@ -93,6 +93,17 @@
 ;;; History
 ;;    see ChangeLog
 
+;;; customization
+
+(defcustom modelica-mode-hook
+  (append
+   (and (require 'hideshow nil t) (list #'hs-minor-mode))
+   ;; Supported and suggested minor modes can be added here.
+   )
+  "Functions without arguments to be run at start of `modelica-mode'."
+  :type 'hook
+  :group 'modelica)
+
 ;;; constants
 
 (defconst mdc-class-modifier-keyword
@@ -301,6 +312,20 @@
 		      mdc-mode-map
 		      "Menu for Modelica mode"
 		      mdc-mode-menu))
+
+(when (featurep 'hideshow)
+  (unless (assoc 'modelica-mode hs-special-modes-alist) ;; one could also use `cl-pushnew'
+      (push
+       (list
+	'modelica-mode
+	(list
+	 (concat "\\(?:" mdc-class-modifier-keyword "\\)?\\(?1:" mdc-class-keyword "\\)")
+	 1)
+	"\\_<end\\_>[[:blank:]][^[:blank:]]+[[:blank:]]*;"
+	nil
+	#'mdc-to-block-end
+	)
+       hs-special-modes-alist)))
 
 ;;;###autoload
 (defun modelica-mode ()
@@ -926,26 +951,40 @@
       (if (= (point) save-point)
 	  (error "No previous statement")))))
 
-(defun mdc-forward-block ()
-  "Move point to next beginning of a block at the same nesting level
-   or a level higher if no next block found on the same level."
-  (interactive)
-  (let ((save-point (point)))
-    (condition-case nil
-	(progn
-	  (mdc-to-block-begin)
-	  (if (> (point) save-point)
-	      ;; we moved already forward to a block begin
-	      ()
-	    (mdc-to-block-end)
-	    (mdc-forward-statement)
+(defun mdc-forward-block (&optional arg)
+  "Move point to next beginning of a block at the same nesting level.
+If no next block found on the same level move a level higher.
+
+If ARG is a positive integer move that many times.
+
+If ARG is a negative integer move backwards instead.
+
+In interactive calls, ARG is the numeric prefix argument."
+  (interactive "p")
+  (cond
+   ((or (null (integerp arg)) (eq arg 1))
+    (let ((save-point (point)))
+      (condition-case nil
+	  (progn
 	    (mdc-to-block-begin)
-	    (if (< (point) save-point)
-		(mdc-forward-block))))
-      ;; in case of error and if we did move yet,
-      ;; move forward one statement
-      (error (if (= (point) save-point)
-		 (mdc-forward-statement))))))
+	    (if (> (point) save-point)
+		;; we moved already forward to a block begin
+		()
+	      (mdc-to-block-end)
+	      (mdc-forward-statement)
+	      (mdc-to-block-begin)
+	      (if (< (point) save-point)
+		  (mdc-forward-block))))
+	;; in case of error and if we did move yet,
+	;; move forward one statement
+	(error (if (= (point) save-point)
+		   (mdc-forward-statement))))))
+   ((> arg 1)
+    (dotimes (_i arg)
+      (mdc-forward-block 1)))
+   ((<= arg 0)
+    (mdc-backward-block)
+    (mdc-forward-block (1+ arg)))))
 
 (defun mdc-backward-block ()
   "Move point to previous beginning of a block at the same nesting level
@@ -985,28 +1024,74 @@
 	       (goto-char save-point)
 	       (error "No statement block"))))))
 
-(defun mdc-to-block-end ()
-  "Move point to end of current statement block"
+(defun mdc-forward-block-end ()
+  "Skip block end and return its name.
+Do not move point if it is not at a block end."
+  (let ((pt (point))
+	ret)
+    (comment-forward most-positive-fixnum)
+    (and
+     (null (ppss-comment-or-string-start (syntax-ppss)))
+     (looking-at "\\_<end\\_>")
+     (progn
+       (goto-char (match-end 0))
+       (comment-forward most-positive-fixnum)
+       (if (eq (char-after) ?\;)
+	   (setq ret "")
+	 (setq ret (buffer-substring-no-properties
+		    (point)
+		    (progn
+		      (forward-sexp)
+		      (point)))))
+       (comment-forward most-positive-fixnum)
+       (if (eq (char-after) ?\;)
+	   (progn
+	     (forward-char)
+	     ret)
+	 (goto-char pt)
+	 (setq ret nil)))
+     ret)))
+
+(defun mdc-to-block-end (&rest _)
+  "Move point to end of current statement block.
+
+Make usable for `hs-forward-sexp-func' by ignoring any arguments."
   (interactive)
   (mdc-keep-region-active)
   (let ((case-fold-search nil)
-	ident (save-point (point)))
+	ident-stack
+	ident
+	(save-point (point)))
     (condition-case nil
 	(progn
 	  (mdc-statement-start)
 	  (mdc-forward-begin)
 	  (mdc-last-unended-begin)
 	  (setq ident (mdc-forward-begin))
-	  (while (progn
-		   (re-search-forward
-		    (concat "\\<end[ \t\n]+" ident "\\>"))
-		   (or
-		    (mdc-within-comment)
-		    (mdc-within-string)))))
+	  (unless ident
+	    (throw 'error nil))
+	  (setq ident-stack (list ident))
+	  (while
+	      (progn
+		(comment-forward most-positive-fixnum)
+		(cond
+		 ((setq ident (mdc-forward-begin))
+		  (push ident ident-stack)
+		  t)
+		 ((setq ident (mdc-forward-block-end))
+		  (unless (string-equal ident (car ident-stack))
+		    (throw 'error nil))
+		  (pop ident-stack)
+		  ident-stack)
+		 (t
+		  (mdc-forward-statement)
+		  (null (eobp)))))))
       (error (progn
 	       (goto-char save-point)
 	       (error (if ident
-			  (format "Missing \"end %s\"" ident)
+			  (if ident-stack
+			      (format "Begin-id \"%s\" does not match end-id \"%s\"" (car ident-stack) ident)
+			    (format "Missing \"end %s\"" ident))
 			"No statement block to end")))))))
 
 ;; snarfed from outline.el (outline-flag-region)
