@@ -1234,6 +1234,15 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
       ;; show annotations from beg to end
       (mdc-show-annotations beg end))))
 
+;; Emacs by default assumes ".mo" as an extension for object files, similar to
+;; ".o".  Assume that when the user loads modelica-mode, they want to remove
+;; this behavior.
+(setq completion-ignored-extensions
+      (remove ".mo" completion-ignored-extensions))
+(when (boundp 'dired-omit-extensions)   ; defined in dired-x
+  (setq dired-omit-extensions
+      (remove ".mo" dired-omit-extensions)))
+
 (provide 'modelica-mode)
 
 ;;; modelica-mode.el ends here
