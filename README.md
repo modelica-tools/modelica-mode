@@ -6,25 +6,27 @@ This code has been written for use with Emacs and shares its licensing (See COPY
 
 Emacs lisp code
 ===============
-  modelica-mode.el     -- major mode for editing Modelica files
 
-  mdc-browse.el        -- Modelica extension for the OO-Browser
-  br-mdc.el               (see http://sourceforge.net/projects/oo-browser)
+- `modelica-mode.el`     -- major mode for editing Modelica files
+
+- `mdc-browse.el`        -- Modelica extension for the OO-Browser
+- `br-mdc.el`               (see http://sourceforge.net/projects/oo-browser)
 
 Installation
 ============
 
-See the files modelica-mode.el and mdc-browse.el for installation
+See the files `modelica-mode.el` and `mdc-browse.el` for installation
 instuctions.
 
 At least put the files
-  modelica-mode.el
-  mdc-browse.el
-  br-mdc.el
-to an Emacs lisp directory, e.g. ~/elisp
+  `modelica-mode.el`
+  `mdc-browse.el`
+  `br-mdc.el`
+to an Emacs lisp directory, e.g. `~/elisp`
 
-and add the following lines to your file ~/.emacs
+and add the following lines to your file `~/.emacs`
 
+```elisp
 ;; Modelica mode
 (setq load-path (cons "~/elisp" load-path))
 (autoload 'modelica-mode "modelica-mode" "Modelica Editing Mode" t)
@@ -54,7 +56,7 @@ and add the following lines to your file ~/.emacs
 		 load-path))
 (load "br-start")
 (global-set-key "\C-c\C-o" 'oo-browser)
-
+```
 
 Modelica mode for Emacs
 =======================
