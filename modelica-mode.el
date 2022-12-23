@@ -94,14 +94,14 @@
 ;;    see ChangeLog
 
 ;;; customization
+(defgroup modelica nil
+  "Major mode for editing Modelica code."
+  :group 'languages)
 
-(defcustom modelica-mode-hook
-  (append
-   (and (require 'hideshow nil t) (list #'hs-minor-mode))
-   ;; Supported and suggested minor modes can be added here.
-   )
-  "Functions without arguments to be run at start of `modelica-mode'."
+(defcustom modelica-mode-hook nil
+  "Hook run after entering `modelica-mode'."
   :type 'hook
+  :options (list 'hs-minor-mode)
   :group 'modelica)
 
 ;;; constants
@@ -244,28 +244,26 @@
   (modify-syntax-entry ?*  ". 23"   mdc-mode-syntax-table)
   (modify-syntax-entry ?\n "> b"    mdc-mode-syntax-table))
 
-(defvar mdc-mode-map nil
-  "Keymap for Modelica mode.")
-
-(if mdc-mode-map
-    ()
-  (setq mdc-mode-map (make-sparse-keymap))
-  (define-key mdc-mode-map "\C-j"  	'mdc-newline-and-indent)
-  (define-key mdc-mode-map "\C-c\C-e" 	'mdc-insert-end)
-  (define-key mdc-mode-map "\C-c\C-s" 	'mdc-show-annotation)
-  (define-key mdc-mode-map "\C-c\C-h" 	'mdc-hide-annotation)
-  (define-key mdc-mode-map "\es" 	'mdc-show-all-annotations)
-  (define-key mdc-mode-map "\eh" 	'mdc-hide-all-annotations)
-  (define-key mdc-mode-map "\C-c\C-c" 	'comment-region)
-  (define-key mdc-mode-map "\e\""       'mdc-indent-for-docstring)
-  (define-key mdc-mode-map "\e;"        'mdc-indent-for-comment)
-  (define-key mdc-mode-map "\ej"        'mdc-indent-new-comment-line)
-  (define-key mdc-mode-map "\ef"        'mdc-forward-statement)
-  (define-key mdc-mode-map "\eb"        'mdc-backward-statement)
-  (define-key mdc-mode-map "\en"        'mdc-forward-block)
-  (define-key mdc-mode-map "\ep"        'mdc-backward-block)
-  (define-key mdc-mode-map "\ea"        'mdc-to-block-begin)
-  (define-key mdc-mode-map "\ee"        'mdc-to-block-end))
+(defvar modelica-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "\C-j"     'mdc-newline-and-indent)
+    (define-key map "\C-c\C-e" 'mdc-insert-end)
+    (define-key map "\C-c\C-s" 'mdc-show-annotation)
+    (define-key map "\C-c\C-h" 'mdc-hide-annotation)
+    (define-key map "\es"      'mdc-show-all-annotations)
+    (define-key map "\eh"      'mdc-hide-all-annotations)
+    (define-key map "\C-c\C-c" 'comment-region)
+    (define-key map "\e\""     'mdc-indent-for-docstring)
+    (define-key map "\e;"      'mdc-indent-for-comment)
+    (define-key map "\ej"      'mdc-indent-new-comment-line)
+    (define-key map "\ef"      'mdc-forward-statement)
+    (define-key map "\eb"      'mdc-backward-statement)
+    (define-key map "\en"      'mdc-forward-block)
+    (define-key map "\ep"      'mdc-backward-block)
+    (define-key map "\ea"      'mdc-to-block-begin)
+    (define-key map "\ee"      'mdc-to-block-end)
+    map)
+  "Keymap for `modelica-mode'.")
 
 (defvar mdc-mode-menu
   '("Modelica"
@@ -309,7 +307,7 @@
 	(require 'easymenu)
       (error nil))
     (easy-menu-define mdc-mode-menu-symbol
-		      mdc-mode-map
+                      modelica-mode-map
 		      "Menu for Modelica mode"
 		      mdc-mode-menu))
 
@@ -328,55 +326,32 @@
        hs-special-modes-alist)))
 
 ;;;###autoload
-(defun modelica-mode ()
+(define-derived-mode modelica-mode prog-mode "Modelica"
   "Major mode for editing Modelica files."
-  (interactive)
-  (kill-all-local-variables)
-
-  (setq major-mode 'modelica-mode)
-  (setq mode-name "Modelica")
-
-  (use-local-map mdc-mode-map)
-  (set-syntax-table mdc-mode-syntax-table)
-  (setq local-abbrev-table mdc-mode-abbrev-table)
-
-  (make-local-variable 'indent-line-function)
-  (setq indent-line-function 'mdc-indent-line)
-
+  :group 'modelica
+  :syntax-table mdc-mode-syntax-table
+  :abbrev-table mdc-mode-abbrev-table
+  (setq-local indent-line-function 'mdc-indent-line)
   ;; comment syntax
-  (make-local-variable 'comment-column)
-  (make-local-variable 'comment-start)
-  (make-local-variable 'comment-start-skip)
-  (make-local-variable 'comment-end)
-  (make-local-variable 'comment-multi-line)
-  (setq	comment-column 32
-	comment-start "// "
-	comment-start-skip "/\\*+ *\\|// *"
-	comment-end ""
-	comment-multi-line nil)
-
+  (setq-local comment-column 32
+              comment-start "// "
+              comment-start-skip "/\\*+ *\\|// *"
+              comment-end ""
+              comment-multi-line nil)
   ;; settings for font-lock-mode
-  (make-local-variable 'font-lock-keywords)
-  (setq font-lock-keywords mdc-font-lock-keywords)
+  (setq-local font-lock-keywords mdc-font-lock-keywords)
   ;; font-lock-mode for newer GNU Emacs versions
-  (make-local-variable 'font-lock-defaults)
-  (setq font-lock-defaults '(mdc-font-lock-keywords nil nil))
-
+  (setq-local font-lock-defaults '(mdc-font-lock-keywords nil nil))
   ;; hide/show annotations
-  (make-local-variable 'line-move-ignore-invisible)
-  (setq line-move-ignore-invisible t)
+  (setq-local line-move-ignore-invisible t)
   (if (functionp 'add-to-invisibility-spec)
       (add-to-invisibility-spec '(mdc-annotation . t))
     ;; XEmacs 21.1 does not know function add-to-invisibility-spec
-    (make-local-variable 'buffer-invisibility-spec)
-    (setq buffer-invisibility-spec '((mdc-annotation . t))))
+    (setq-local buffer-invisibility-spec '((mdc-annotation . t))))
   (mdc-hide-all-annotations)
-
   ;; add menu
   (if mdc-mode-menu-symbol
-      (easy-menu-add mdc-mode-menu-symbol))
-
-  (run-hooks 'modelica-mode-hook))
+      (easy-menu-add mdc-mode-menu-symbol)))
 
 (defun mdc-indent-for-comment ()
   "Indent this line's comment to comment-column,
