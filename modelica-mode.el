@@ -34,30 +34,26 @@
 ;;  - show / hide of annotations
 ;;      C-c C-s  show annotation of current statement
 ;;      C-c C-h  hide annotation of current statement
-;;      M-s      show all annotations
-;;      M-h      hide all annotations
+;;      C-c M-s  show all annotations
+;;      C-c M-h  hide all annotations
 ;;
 ;;  - indentation of lines, e.g.
 ;;      TAB      indent current line
-;;      M-x C-\  indent current region
+;;      C-M-\    indent current region
 ;;      C-j      indent current line, create a new line, indent it
 ;;               (like TAB ENTER TAB)
-;;
-;;  - hide/show of annotations
-;;      C-h      hide annotations
-;;      C-s      show annotations
 ;;
 ;;  - automatic insertion of end statements
 ;;      C-c C-e  search backwards for the last unended begin of a code block,
 ;;               insert the according end-statement
 ;;
 ;;  - move commands which know about statements and statement blocks
-;;      M-f      move to next beginning of a statement
-;;      M-b      move to previous beginning of a statement
+;;      M-e      move to next beginning of a statement
+;;      M-a      move to previous beginning of a statement
 ;;      M-n      move to next beginning of a statement block
 ;;      M-p      move to previous beginning of a statement block
-;;      M-a      move to beginning of current statement block
-;;      M-e      move to end of current statement block
+;;      C-M-a    move to beginning of current statement block
+;;      C-M-e    move to end of current statement block
 ;;
 ;;  - commands for writing comments treat documentation strings as well
 ;;      M-;      insert a comment for current statement (standard Emacs)
@@ -337,15 +333,6 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     )
   "Menu for Modelica mode.")
 
-;; define Modelica menu if easymenu is available
-(if (condition-case nil
-	(require 'easymenu)
-      (error nil))
-    (easy-menu-define mdc-mode-menu-symbol
-                      modelica-mode-map
-		      "Menu for Modelica mode"
-		      mdc-mode-menu))
-
 (when (featurep 'hideshow)
   (unless (assoc 'modelica-mode hs-special-modes-alist) ;; one could also use `cl-pushnew'
       (push
@@ -391,9 +378,15 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     ;; XEmacs 21.1 does not know function add-to-invisibility-spec
     (setq-local buffer-invisibility-spec '((mdc-annotation . t))))
   (mdc-hide-all-annotations)
-  ;; add menu
-  (if mdc-mode-menu-symbol
-      (easy-menu-add mdc-mode-menu-symbol)))
+  ;; add menu if easymenu is available
+  (when (condition-case nil
+	    (require 'easymenu)
+          (error nil))
+    (easy-menu-define mdc-mode-menu-symbol
+      modelica-mode-map
+      "Menu for Modelica mode"
+      mdc-mode-menu)
+    (easy-menu-add mdc-mode-menu-symbol modelica-mode-map)))
 
 (defun mdc-indent-for-comment ()
   "Indent this line's comment to comment-column,
