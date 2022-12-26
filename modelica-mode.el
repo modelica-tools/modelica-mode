@@ -104,6 +104,12 @@
   :options (list 'hs-minor-mode)
   :group 'modelica)
 
+(defcustom modelica-use-emacs-keybindings t
+  "Choose whether to use emacs standard or original keybindings.
+If true, use keybindings similar to other programming modes.  If
+false, use original modelica-mode keybindings; those override
+some standard Emacs keybindings.")
+
 ;;; constants
 
 (defconst mdc-class-modifier-keyword
@@ -244,7 +250,7 @@
   (modify-syntax-entry ?*  ". 23"   mdc-mode-syntax-table)
   (modify-syntax-entry ?\n "> b"    mdc-mode-syntax-table))
 
-(defvar modelica-mode-map
+(defvar modelica-original-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map "\C-j"     'mdc-newline-and-indent)
     (define-key map "\C-c\C-e" 'mdc-insert-end)
@@ -263,6 +269,35 @@
     (define-key map "\ea"      'mdc-to-block-begin)
     (define-key map "\ee"      'mdc-to-block-end)
     map)
+  "Original keymap for `modelica-mode'.
+This keymap overrides some standard Emacs keybindings.")
+
+(defvar modelica-new-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-j")     'mdc-newline-and-indent)
+    (define-key map (kbd "C-c C-e") 'mdc-insert-end)
+    (define-key map (kbd "C-c C-s") 'mdc-show-annotation)
+    (define-key map (kbd "C-c C-h") 'mdc-hide-annotation)
+    (define-key map (kbd "C-c M-s") 'mdc-show-all-annotations)
+    (define-key map (kbd "C-c M-h") 'mdc-hide-all-annotations)
+    (define-key map (kbd "C-c C-c") 'comment-region)
+    (define-key map (kbd "M-\"")    'mdc-indent-for-docstring)
+    (define-key map (kbd "M-;")     'mdc-indent-for-comment)
+    (define-key map (kbd "M-j")     'mdc-indent-new-comment-line)
+    (define-key map (kbd "M-a")     'mdc-backward-statement)
+    (define-key map (kbd "M-e")     'mdc-forward-statement)
+    (define-key map (kbd "M-n")     'mdc-forward-block)
+    (define-key map (kbd "M-p")     'mdc-backward-block)
+    (define-key map (kbd "C-M-a")   'mdc-to-block-begin)
+    (define-key map (kbd "C-M-e")   'mdc-to-block-end)
+    map)
+  "New-style keymap for `modelica-mode'.
+This keymap tries to adhere to Emacs keybindings conventions.")
+
+(defvar modelica-mode-map
+  (if modelica-use-emacs-keybindings
+      modelica-new-mode-map
+    modelica-original-mode-map)
   "Keymap for `modelica-mode'.")
 
 (defvar mdc-mode-menu
@@ -331,6 +366,13 @@
   :group 'modelica
   :syntax-table mdc-mode-syntax-table
   :abbrev-table mdc-mode-abbrev-table
+  ;; Allow switching between original and new keybindings just by setting
+  ;; `modelica-use-emacs-keybindings' and reverting a modelica buffer
+  (setq modelica-mode-map
+        (if modelica-use-emacs-keybindings
+            modelica-new-mode-map
+          modelica-original-mode-map))
+  (use-local-map modelica-mode-map)
   (setq-local indent-line-function 'mdc-indent-line)
   ;; comment syntax
   (setq-local comment-column 32
