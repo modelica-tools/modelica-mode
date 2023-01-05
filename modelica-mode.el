@@ -1,4 +1,4 @@
-;;; modelica-mode.el --- major mode for editing Modelica files
+;;; modelica-mode.el --- Major mode for editing Modelica files
 
 ;; Copyright (C) 2010       Dietmar Winkler
 ;; Copyright (C) 1997--2001 Ruediger Franke
@@ -7,7 +7,7 @@
 ;; Author:   Ruediger Franke <rfranke@users.sourceforge.net>
 ;; URL: https://github.com/modelica-tools/modelica-mode
 ;; Version: 1.4.1
-;; Package-Requires: ((emacs "25"))
+;; Package-Requires: ((emacs "27.1"))
 ;; Keywords: languages, continuous system modeling
 
 ;; This program is free software: you can redistribute it and/or modify
@@ -83,6 +83,7 @@
 ;;     Ruediger Franke <rfranke@users.sourceforge.net>
 
 (require 'newcomment)
+(require 'easymenu)
 
 ;;; Code:
 
@@ -103,7 +104,10 @@
   "Choose whether to use Emacs standard or original keybindings.
 If true, use keybindings similar to other programming modes.  If
 false, use original `modelica-mode' keybindings; those override
-some standard Emacs keybindings.")
+some standard Emacs keybindings."
+  :type 'boolean
+  :safe t
+  :group 'modelica)
 
 ;;; constants
 
@@ -194,19 +198,13 @@ some standard Emacs keybindings.")
 		       ; '("annotation" "connect") t)
 		       "\\(annotation\\|connect\\)"
 		       "\\>")
-	       0 (if (string-match "XEmacs" (emacs-version))
-		     ;; XEmacs 21.1 still uses old font-lock version
-		     (identity 'font-lock-preprocessor-face)
-		   (identity 'font-lock-builtin-face)))
+	       0 (identity 'font-lock-builtin-face))
 	 (list (concat "\\<"
 		       ;(regexp-opt
 		       ; '("false" "true") t)
 		       "\\(false\\|true\\)"
 		       "\\>")
-	       0 (if (string-match "XEmacs" (emacs-version))
-		     ;; XEmacs 21.1 still uses old font-lock version
-		     (identity 'font-lock-reference-face)
-		   (identity 'font-lock-constant-face)))
+	       0 (identity 'font-lock-constant-face))
 	 (list (concat "\\<"
 		       ;(regexp-opt
 		       ; '("time") t)
@@ -238,10 +236,8 @@ some standard Emacs keybindings.")
 
   (modify-syntax-entry ?_ "w"       modelica-mode-syntax-table)
   (modify-syntax-entry ?. "w"       modelica-mode-syntax-table)
-  (if (string-match "XEmacs" (emacs-version))
-      (modify-syntax-entry ?/  ". 1456" modelica-mode-syntax-table)
-    (modify-syntax-entry ?/  ". 124b" modelica-mode-syntax-table))
-
+  (modify-syntax-entry ?/  ". 124b" modelica-mode-syntax-table)
+  
   (modify-syntax-entry ?*  ". 23"   modelica-mode-syntax-table)
   (modify-syntax-entry ?\n "> b"    modelica-mode-syntax-table))
 
@@ -301,15 +297,13 @@ This keymap tries to adhere to Emacs keybindings conventions.")
      [" - next statement"        modelica-forward-statement t]
      [" - previous statement"    modelica-backward-statement t]
      [" - start of code block"   modelica-to-block-begin t]
-     [" - end of code block"     modelica-to-block-end t]
-     )
+     [" - end of code block"     modelica-to-block-end t])
     [" - next code block"        modelica-forward-block t]
     [" - previous code block"    modelica-backward-block t]
     "-"
     ("Annotation"
      [" - show all"              modelica-show-all-annotations t]
-     [" - hide all"              modelica-hide-all-annotations t]
-     )
+     [" - hide all"              modelica-hide-all-annotations t])
      [" - show current"          modelica-show-annotation t]
      [" - hide current"          modelica-hide-annotation
       :keys "C-c C-h" :active t]
@@ -319,8 +313,7 @@ This keymap tries to adhere to Emacs keybindings conventions.")
      [" - for docstring"         modelica-indent-for-docstring t]
      ["Newline and indent"       modelica-newline-and-indent
       :keys "C-j" :active t]
-     ["New comment line"         modelica-indent-new-comment-line t]
-     )
+     ["New comment line"         modelica-indent-new-comment-line t])
     [" - line"                   indent-for-tab-command t]
     [" - region"                 indent-region (mark)]
     "-"
@@ -328,8 +321,7 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     ["Uncomment region"          (comment-region (point) (mark) '(4))
      :keys "C-u C-c C-c" :active (mark)]
     "-"
-    ["End code block"            modelica-insert-end t]
-    )
+    ["End code block"            modelica-insert-end t])
   "Menu for Modelica mode.")
 
 (when (featurep 'hideshow)
@@ -342,8 +334,7 @@ This keymap tries to adhere to Emacs keybindings conventions.")
 	 1)
 	"\\_<end\\_>[[:blank:]][^[:blank:]]+[[:blank:]]*;"
 	nil
-	#'modelica-to-block-end
-	)
+	#'modelica-to-block-end)
        hs-special-modes-alist)))
 
 ;;;###autoload
@@ -372,20 +363,12 @@ This keymap tries to adhere to Emacs keybindings conventions.")
   (setq-local font-lock-defaults '(modelica-font-lock-keywords nil nil))
   ;; hide/show annotations
   (setq-local line-move-ignore-invisible t)
-  (if (functionp 'add-to-invisibility-spec)
-      (add-to-invisibility-spec '(modelica-annotation . t))
-    ;; XEmacs 21.1 does not know function add-to-invisibility-spec
-    (setq-local buffer-invisibility-spec '((modelica-annotation . t))))
+  (add-to-invisibility-spec '(modelica-annotation . t))
   (modelica-hide-all-annotations)
-  ;; add menu if easymenu is available
-  (when (condition-case nil
-	    (require 'easymenu)
-          (error nil))
-    (easy-menu-define modelica-mode-menu-symbol
+  (easy-menu-define modelica-mode-menu-symbol
       modelica-mode-map
       "Menu for Modelica mode"
-      modelica-mode-menu)
-    (easy-menu-add modelica-mode-menu-symbol modelica-mode-map)))
+      modelica-mode-menu))
 
 (defun modelica-indent-for-comment ()
   "Indent this line's comment to `comment-column', or insert an empty comment."
@@ -1161,33 +1144,10 @@ property to the overlay that makes the outline invisible."
 	    (delete-overlay o))
 	(setq overlays (cdr overlays))))))
 
-;; define overlay functions for XEmacs 21.1
-(if (not (functionp 'overlays-in))
-    (defun overlays-in (beg end)
-      (extent-list (current-buffer) beg end)))
-
-(if (not (functionp 'make-overlay))
-    (defalias 'make-overlay 'make-extent))
-
-(if (not (functionp 'delete-overlay))
-    (defalias 'delete-overlay 'delete-extent))
-
-(if (not (functionp 'overlay-put))
-    (defalias 'overlay-put 'set-extent-property))
-
-(if (not (functionp 'overlay-get))
-    (defalias 'overlay-get 'extent-property))
-
 ;; test for overlay
-(if (not (functionp 'overlays-at))
-    ;; XEmacs 21.1
-    (defun modelica-within-overlay (prop)
-      "Return overlay value if point is contained in an overlay
-       with property prop, nil otherwise."
-      (extent-at (point) (current-buffer) prop))
-  (defun modelica-within-overlay (prop)
-    "Return overlay value if point is contained in an overlay
-     with property prop, nil otherwise."
+(defun modelica-within-overlay (prop)
+  "Return overlay value if point is contained in an overlay with
+property PROP, nil otherwise."
     (let ((overlays (overlays-at (point)))
 	  (value nil)
 	  o)
@@ -1195,7 +1155,7 @@ property to the overlay that makes the outline invisible."
 	(setq o (car overlays))
 	(setq value (overlay-get o prop))
 	(setq overlays (cdr overlays)))
-      value)))
+      value))
 
 (defun modelica-hide-annotations (beg end)
   "Hide all annotations between BEG and END."
