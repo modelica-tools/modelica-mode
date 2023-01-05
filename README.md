@@ -36,3 +36,9 @@ the following form to your init file instead:
   :commands (modelica-mode)
   :mode ("\\.mo\\'" . modelica-mode))
 ```
+
+# OO-Browser Support for Modelica
+
+The files `mdc-browse.el` and `br-mdc.el` contain code for Modelica support
+for [OO-Browser](https://sourceforge.net/projects/oo-browser/).  See the file
+`README-oo-browser.md` for instructions.

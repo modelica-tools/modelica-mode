@@ -1,7 +1,7 @@
 # OO-Browser Support for Modelica
 
 The files `mdc-browse.el` and `br-mdc.el` contain a Modelica extension for the
-OO-Browser (see http://sourceforge.net/projects/oo-browser).
+OO-Browser (see https://sourceforge.net/projects/oo-browser).
 
 Note that this code is currently unmaintained; see
 https://github.com/modelica-tools/modelica-mode/issues/1#issuecomment-38176132;
