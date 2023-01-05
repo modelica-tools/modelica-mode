@@ -77,9 +77,9 @@
 ;;
 ;; (2) Add the following lines to your ~/.emacs file
 ;;
-;;  (setq load-path (cons "~/elisp" load-path))
+;;  (add-to-list 'load-path "~/elisp")
 ;;  (autoload 'modelica-mode "modelica-mode" "Modelica Editing Mode" t)
-;;  (setq auto-mode-alist (cons '("\.mo$" . modelica-mode) auto-mode-alist))
+;;  (add-to-list 'auto-mode-alist '("\\.mo\\'" . modelica-mode))
 ;;
 ;; (3) Activate the mode by loading a file with the extension ".mo"
 ;;     or by invoking
