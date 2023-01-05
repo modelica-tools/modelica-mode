@@ -1,12 +1,13 @@
 ;;; modelica-mode.el --- Major mode for editing Modelica files
 
-;; Copyright (C) 2010       Dietmar Winkler
+;; Copyright (C) 2022-      Rudolf Schlatte
+;; Copyright (C) 2010-      Dietmar Winkler
 ;; Copyright (C) 1997--2001 Ruediger Franke
 ;; Copyright (C) 1997--2001 Free Software Foundation, Inc.
 
-;; Author:   Ruediger Franke <rfranke@users.sourceforge.net>
+;; Original author:   Ruediger Franke <rfranke@users.sourceforge.net>
 ;; URL: https://github.com/modelica-tools/modelica-mode
-;; Version: 1.4.1
+;; Version: 2.0.0
 ;; Package-Requires: ((emacs "27.1"))
 ;; Keywords: languages, continuous system modeling
 
@@ -87,7 +88,7 @@
 
 ;;; Code:
 
-(defconst modelica-mode-version "1.4.1")
+(defconst modelica-mode-version "2.0.0")
 
 ;;; customization
 (defgroup modelica nil
@@ -246,7 +247,7 @@ some standard Emacs keybindings."
   (modify-syntax-entry ?_ "w"       modelica-mode-syntax-table)
   (modify-syntax-entry ?. "w"       modelica-mode-syntax-table)
   (modify-syntax-entry ?/  ". 124b" modelica-mode-syntax-table)
-  
+
   (modify-syntax-entry ?*  ". 23"   modelica-mode-syntax-table)
   (modify-syntax-entry ?\n "> b"    modelica-mode-syntax-table))
 
