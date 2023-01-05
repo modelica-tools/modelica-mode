@@ -4,28 +4,24 @@
 ;; Copyright (C) 1997--2001 Ruediger Franke
 ;; Copyright (C) 1997--2001 Free Software Foundation, Inc.
 
-;; Keywords: languages, continuous system modeling
 ;; Author:   Ruediger Franke <rfranke@users.sourceforge.net>
+;; URL: https://github.com/modelica-tools/modelica-mode
+;; Version: 1.4.1
+;; Package-Requires: ((emacs "25"))
+;; Keywords: languages, continuous system modeling
 
-;; This code has been written for use with Emacs and shares its licensing.
-
-;; GNU Emacs is free software: you can redistribute it and/or modify
+;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
 
-;; GNU Emacs is distributed in the hope that it will be useful,
+;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defconst modelica-mode-version "1.4.1")
-
-;;; Synched up with: GNU Emacs 20.7, XEmacs 21.1.
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -86,8 +82,9 @@
 ;; (5) Please send comments and suggestions to
 ;;     Ruediger Franke <rfranke@users.sourceforge.net>
 
-;;; History
-;;    see ChangeLog
+(require 'newcomment)
+
+(defconst modelica-mode-version "1.4.1")
 
 ;;; customization
 (defgroup modelica nil
@@ -540,7 +537,7 @@ This keymap tries to adhere to Emacs keybindings conventions.")
 	     (not (mdc-within-equation)))
 	    (setq offset (- offset mdc-basic-offset)))
 	(condition-case nil
-	    (let ()
+	    (progn
 	      (mdc-last-unended-begin t)
 	      ;; correct offset
 	      (if (looking-at "end\\>")
@@ -674,7 +671,7 @@ This keymap tries to adhere to Emacs keybindings conventions.")
    nil otherwise; optionally move point to the bracket"
   (let ((save-point (point)) (matrix-expression nil))
     (condition-case nil
-	(let ()
+	(progn
 	  (while (progn
 		   (re-search-backward "[\]\[]")
 		   (mdc-within-comment t)))
@@ -692,7 +689,7 @@ This keymap tries to adhere to Emacs keybindings conventions.")
    optionally move point to the identifying '=' or ':='"
   (let ((equation nil) (save-point (point)))
     (condition-case nil
-	(let ()
+	(progn
 	  (while (progn
 		   (re-search-backward
 		    (concat "\\([^=]:?=[^=]\\)\\|;"))
