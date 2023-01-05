@@ -1,35 +1,19 @@
-This directory contains extensions for Emacs supporting Modelica.
-Modelica is a unified object-oriented language for physical systems modeling
-(see http://www.Modelica.org).
+# OO-Browser Support for Modelica
 
-This code has been written for use with Emacs and shares its licensing (See COPYING).
+The files `mdc-browse.el` and `br-mdc.el` contain a Modelica extension for the
+OO-Browser (see https://sourceforge.net/projects/oo-browser).
 
-Emacs lisp code
-===============
-  modelica-mode.el     -- major mode for editing Modelica files
+Note that this code is currently unmaintained; see
+https://github.com/modelica-tools/modelica-mode/issues/1#issuecomment-38176132;
+this file contains the original installation and usage instructions.
 
-  mdc-browse.el        -- Modelica extension for the OO-Browser
-  br-mdc.el               (see http://sourceforge.net/projects/oo-browser)
 
-Installation
-============
+## Installation
 
-See the files modelica-mode.el and mdc-browse.el for installation
-instuctions.
+Put the files `mdc-browse.el` `br-mdc.el` into an Emacs lisp directory,
+e.g. `~/elisp`, and add the following lines to your init file:
 
-At least put the files
-  modelica-mode.el
-  mdc-browse.el
-  br-mdc.el
-to an Emacs lisp directory, e.g. ~/elisp
-
-and add the following lines to your file ~/.emacs
-
-;; Modelica mode
-(setq load-path (cons "~/elisp" load-path))
-(autoload 'modelica-mode "modelica-mode" "Modelica Editing Mode" t)
-(setq auto-mode-alist (cons '("\.mo$" . modelica-mode) auto-mode-alist))
-
+```elisp
 ;; Enable Modelica browsing
 (autoload 'mdc-browse "mdc-browse" "Modelica Class Browsing" t)
 (autoload 'br-mdc "br-mdc" "Modelica Class Browsing" t)
@@ -54,19 +38,9 @@ and add the following lines to your file ~/.emacs
 		 load-path))
 (load "br-start")
 (global-set-key "\C-c\C-o" 'oo-browser)
+```
 
-
-Modelica mode for Emacs
-=======================
-
-The aim is to provide basic support as known from many programming
-languages under Emacs. This includes proper indentation, automated
-closing of code blocks, movement by statements and code blocks,
-support for writing comments, and syntax highlighting.
-
-
-Tutorial introduction into OO-Browser for Modelica
-==================================================
+## Tutorial introduction into OO-Browser for Modelica
 
 The following steps should be helpful to start investigating
 OO-Browser for Modelica without the need to read its documentation
@@ -82,35 +56,44 @@ Now start Emacs and open one of the files in your directory.
 -> select the menu item <OO-Browser -> Create-or-Load-Env>
 
 It is prompted for the environment name.
+
 -> Choose a name, e.g. hello-world.
 
 It is prompted for the file to store class information in.
+
 -> confirm the default name OOBR
 
 Now you must choose a language to work with.
+
 -> select Modelica
 
 Finally specify system and library directories
 (specify the current directory "." as the only system directory)
 
 Hit RET to specify the code directories for the Environment
+
 -> Return
 
 Top-level system-specific code dir #1 (RET to end):
+
 -> . Return
 
 Top-level system-specific code dir #2 (RET to end):
+
 -> Return
 
 Top-level reusable code library dir #1 (RET to end):
+
 -> Return
 
 Now OO-Browser is ready to scan your Modelica files
 
 Build Environment 'hello-world now? (y or n)
+
 -> y
 
 Build Environment in the background? (y or n)
+
 -> n
 
 Now all Modelica code files in the specified directories are scanned.
