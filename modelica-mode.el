@@ -107,22 +107,22 @@ some standard Emacs keybindings.")
 
 ;;; constants
 
-(defconst mdc-class-modifier-keyword
+(defconst modelica-class-modifier-keyword
   "\\(encapsulated\\|final\\|inner\\|outer\\|partial\\|re\\(declare\\|placeable\\)\\)[ \t\n\r]+"
   "*Keyword regexp optionally found before a class keyword.")
 
-(defconst mdc-class-keyword
+(defconst modelica-class-keyword
   "\\(block\\|c\\(lass\\|onnector\\)\\|function\\|model\\|package\\|record\\|type\\)[ \t\n\r]+"
   "*Keyword regexp preceding a Modelica class declaration or definition.")
 
 ;;; Interface to font-lock
 
-(defvar mdc-font-lock-keywords nil
+(defvar modelica-font-lock-keywords nil
   "Keywords to highlight for Modelica.  See variable `font-lock-keywords'.")
 
-(if mdc-font-lock-keywords
+(if modelica-font-lock-keywords
     ()
-  (setq mdc-font-lock-keywords
+  (setq modelica-font-lock-keywords
 	(list
 	 (list (concat "\\<"
 		       "\\(do\\|"
@@ -216,75 +216,75 @@ some standard Emacs keybindings.")
 
 ;;; The mode
 
-(defvar mdc-basic-offset 2
+(defvar modelica-basic-offset 2
   "Basic offset for indentation in Modelica Mode.")
 
-(defvar mdc-comment-offset 3
+(defvar modelica-comment-offset 3
   "Offset for indentation in comments in Modelica Mode.")
 
-(defvar mdc-statement-offset 2
+(defvar modelica-statement-offset 2
   "Offset for indentation in statements in Modelica Mode.")
 
-(defvar mdc-mode-syntax-table nil
+(defvar modelica-mode-syntax-table nil
   "Syntax table used while in Modelica mode.")
 
-(defvar mdc-mode-abbrev-table nil
+(defvar modelica-mode-abbrev-table nil
   "Abbrev table used while in Modelica mode.")
-(define-abbrev-table 'mdc-mode-abbrev-table ())
+(define-abbrev-table 'modelica-mode-abbrev-table ())
 
-(if mdc-mode-syntax-table
+(if modelica-mode-syntax-table
     ()              ; Do not change the table if it is already set up.
-  (setq mdc-mode-syntax-table (make-syntax-table))
+  (setq modelica-mode-syntax-table (make-syntax-table))
 
-  (modify-syntax-entry ?_ "w"       mdc-mode-syntax-table)
-  (modify-syntax-entry ?. "w"       mdc-mode-syntax-table)
+  (modify-syntax-entry ?_ "w"       modelica-mode-syntax-table)
+  (modify-syntax-entry ?. "w"       modelica-mode-syntax-table)
   (if (string-match "XEmacs" (emacs-version))
-      (modify-syntax-entry ?/  ". 1456" mdc-mode-syntax-table)
-    (modify-syntax-entry ?/  ". 124b" mdc-mode-syntax-table))
+      (modify-syntax-entry ?/  ". 1456" modelica-mode-syntax-table)
+    (modify-syntax-entry ?/  ". 124b" modelica-mode-syntax-table))
 
-  (modify-syntax-entry ?*  ". 23"   mdc-mode-syntax-table)
-  (modify-syntax-entry ?\n "> b"    mdc-mode-syntax-table))
+  (modify-syntax-entry ?*  ". 23"   modelica-mode-syntax-table)
+  (modify-syntax-entry ?\n "> b"    modelica-mode-syntax-table))
 
 (defvar modelica-original-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "\C-j"     'mdc-newline-and-indent)
-    (define-key map "\C-c\C-e" 'mdc-insert-end)
-    (define-key map "\C-c\C-s" 'mdc-show-annotation)
-    (define-key map "\C-c\C-h" 'mdc-hide-annotation)
-    (define-key map "\es"      'mdc-show-all-annotations)
-    (define-key map "\eh"      'mdc-hide-all-annotations)
+    (define-key map "\C-j"     'modelica-newline-and-indent)
+    (define-key map "\C-c\C-e" 'modelica-insert-end)
+    (define-key map "\C-c\C-s" 'modelica-show-annotation)
+    (define-key map "\C-c\C-h" 'modelica-hide-annotation)
+    (define-key map "\es"      'modelica-show-all-annotations)
+    (define-key map "\eh"      'modelica-hide-all-annotations)
     (define-key map "\C-c\C-c" 'comment-region)
-    (define-key map "\e\""     'mdc-indent-for-docstring)
-    (define-key map "\e;"      'mdc-indent-for-comment)
-    (define-key map "\ej"      'mdc-indent-new-comment-line)
-    (define-key map "\ef"      'mdc-forward-statement)
-    (define-key map "\eb"      'mdc-backward-statement)
-    (define-key map "\en"      'mdc-forward-block)
-    (define-key map "\ep"      'mdc-backward-block)
-    (define-key map "\ea"      'mdc-to-block-begin)
-    (define-key map "\ee"      'mdc-to-block-end)
+    (define-key map "\e\""     'modelica-indent-for-docstring)
+    (define-key map "\e;"      'modelica-indent-for-comment)
+    (define-key map "\ej"      'modelica-indent-new-comment-line)
+    (define-key map "\ef"      'modelica-forward-statement)
+    (define-key map "\eb"      'modelica-backward-statement)
+    (define-key map "\en"      'modelica-forward-block)
+    (define-key map "\ep"      'modelica-backward-block)
+    (define-key map "\ea"      'modelica-to-block-begin)
+    (define-key map "\ee"      'modelica-to-block-end)
     map)
   "Original keymap for `modelica-mode'.
 This keymap overrides some standard Emacs keybindings.")
 
 (defvar modelica-new-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-j")     'mdc-newline-and-indent)
-    (define-key map (kbd "C-c C-e") 'mdc-insert-end)
-    (define-key map (kbd "C-c C-s") 'mdc-show-annotation)
-    (define-key map (kbd "C-c C-h") 'mdc-hide-annotation)
-    (define-key map (kbd "C-c M-s") 'mdc-show-all-annotations)
-    (define-key map (kbd "C-c M-h") 'mdc-hide-all-annotations)
+    (define-key map (kbd "C-j")     'modelica-newline-and-indent)
+    (define-key map (kbd "C-c C-e") 'modelica-insert-end)
+    (define-key map (kbd "C-c C-s") 'modelica-show-annotation)
+    (define-key map (kbd "C-c C-h") 'modelica-hide-annotation)
+    (define-key map (kbd "C-c M-s") 'modelica-show-all-annotations)
+    (define-key map (kbd "C-c M-h") 'modelica-hide-all-annotations)
     (define-key map (kbd "C-c C-c") 'comment-region)
-    (define-key map (kbd "M-\"")    'mdc-indent-for-docstring)
-    (define-key map (kbd "M-;")     'mdc-indent-for-comment)
-    (define-key map (kbd "M-j")     'mdc-indent-new-comment-line)
-    (define-key map (kbd "M-a")     'mdc-backward-statement)
-    (define-key map (kbd "M-e")     'mdc-forward-statement)
-    (define-key map (kbd "M-n")     'mdc-forward-block)
-    (define-key map (kbd "M-p")     'mdc-backward-block)
-    (define-key map (kbd "C-M-a")   'mdc-to-block-begin)
-    (define-key map (kbd "C-M-e")   'mdc-to-block-end)
+    (define-key map (kbd "M-\"")    'modelica-indent-for-docstring)
+    (define-key map (kbd "M-;")     'modelica-indent-for-comment)
+    (define-key map (kbd "M-j")     'modelica-indent-new-comment-line)
+    (define-key map (kbd "M-a")     'modelica-backward-statement)
+    (define-key map (kbd "M-e")     'modelica-forward-statement)
+    (define-key map (kbd "M-n")     'modelica-forward-block)
+    (define-key map (kbd "M-p")     'modelica-backward-block)
+    (define-key map (kbd "C-M-a")   'modelica-to-block-begin)
+    (define-key map (kbd "C-M-e")   'modelica-to-block-end)
     map)
   "New-style keymap for `modelica-mode'.
 This keymap tries to adhere to Emacs keybindings conventions.")
@@ -295,31 +295,31 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     modelica-original-mode-map)
   "Keymap for `modelica-mode'.")
 
-(defvar mdc-mode-menu
+(defvar modelica-mode-menu
   '("Modelica"
     ("Move to"
-     [" - next statement"        mdc-forward-statement t]
-     [" - previous statement"    mdc-backward-statement t]
-     [" - start of code block"   mdc-to-block-begin t]
-     [" - end of code block"     mdc-to-block-end t]
+     [" - next statement"        modelica-forward-statement t]
+     [" - previous statement"    modelica-backward-statement t]
+     [" - start of code block"   modelica-to-block-begin t]
+     [" - end of code block"     modelica-to-block-end t]
      )
-    [" - next code block"        mdc-forward-block t]
-    [" - previous code block"    mdc-backward-block t]
+    [" - next code block"        modelica-forward-block t]
+    [" - previous code block"    modelica-backward-block t]
     "-"
     ("Annotation"
-     [" - show all"              mdc-show-all-annotations t]
-     [" - hide all"              mdc-hide-all-annotations t]
+     [" - show all"              modelica-show-all-annotations t]
+     [" - hide all"              modelica-hide-all-annotations t]
      )
-     [" - show current"          mdc-show-annotation t]
-     [" - hide current"          mdc-hide-annotation
+     [" - show current"          modelica-show-annotation t]
+     [" - hide current"          modelica-hide-annotation
       :keys "C-c C-h" :active t]
     "-"
     ("Indent"
-     [" - for comment"           mdc-indent-for-comment t]
-     [" - for docstring"         mdc-indent-for-docstring t]
-     ["Newline and indent"       mdc-newline-and-indent
+     [" - for comment"           modelica-indent-for-comment t]
+     [" - for docstring"         modelica-indent-for-docstring t]
+     ["Newline and indent"       modelica-newline-and-indent
       :keys "C-j" :active t]
-     ["New comment line"         mdc-indent-new-comment-line t]
+     ["New comment line"         modelica-indent-new-comment-line t]
      )
     [" - line"                   indent-for-tab-command t]
     [" - region"                 indent-region (mark)]
@@ -328,7 +328,7 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     ["Uncomment region"          (comment-region (point) (mark) '(4))
      :keys "C-u C-c C-c" :active (mark)]
     "-"
-    ["End code block"            mdc-insert-end t]
+    ["End code block"            modelica-insert-end t]
     )
   "Menu for Modelica mode.")
 
@@ -338,11 +338,11 @@ This keymap tries to adhere to Emacs keybindings conventions.")
        (list
 	'modelica-mode
 	(list
-	 (concat "\\(?:" mdc-class-modifier-keyword "\\)?\\(?1:" mdc-class-keyword "\\)")
+	 (concat "\\(?:" modelica-class-modifier-keyword "\\)?\\(?1:" modelica-class-keyword "\\)")
 	 1)
 	"\\_<end\\_>[[:blank:]][^[:blank:]]+[[:blank:]]*;"
 	nil
-	#'mdc-to-block-end
+	#'modelica-to-block-end
 	)
        hs-special-modes-alist)))
 
@@ -350,8 +350,8 @@ This keymap tries to adhere to Emacs keybindings conventions.")
 (define-derived-mode modelica-mode prog-mode "Modelica"
   "Major mode for editing Modelica files."
   :group 'modelica
-  :syntax-table mdc-mode-syntax-table
-  :abbrev-table mdc-mode-abbrev-table
+  :syntax-table modelica-mode-syntax-table
+  :abbrev-table modelica-mode-abbrev-table
   ;; Allow switching between original and new keybindings just by setting
   ;; `modelica-use-emacs-keybindings' and reverting a modelica buffer
   (setq modelica-mode-map
@@ -359,7 +359,7 @@ This keymap tries to adhere to Emacs keybindings conventions.")
             modelica-new-mode-map
           modelica-original-mode-map))
   (use-local-map modelica-mode-map)
-  (setq-local indent-line-function 'mdc-indent-line)
+  (setq-local indent-line-function 'modelica-indent-line)
   ;; comment syntax
   (setq-local comment-column 32
               comment-start "// "
@@ -367,33 +367,33 @@ This keymap tries to adhere to Emacs keybindings conventions.")
               comment-end ""
               comment-multi-line nil)
   ;; settings for font-lock-mode
-  (setq-local font-lock-keywords mdc-font-lock-keywords)
+  (setq-local font-lock-keywords modelica-font-lock-keywords)
   ;; font-lock-mode for newer GNU Emacs versions
-  (setq-local font-lock-defaults '(mdc-font-lock-keywords nil nil))
+  (setq-local font-lock-defaults '(modelica-font-lock-keywords nil nil))
   ;; hide/show annotations
   (setq-local line-move-ignore-invisible t)
   (if (functionp 'add-to-invisibility-spec)
-      (add-to-invisibility-spec '(mdc-annotation . t))
+      (add-to-invisibility-spec '(modelica-annotation . t))
     ;; XEmacs 21.1 does not know function add-to-invisibility-spec
-    (setq-local buffer-invisibility-spec '((mdc-annotation . t))))
-  (mdc-hide-all-annotations)
+    (setq-local buffer-invisibility-spec '((modelica-annotation . t))))
+  (modelica-hide-all-annotations)
   ;; add menu if easymenu is available
   (when (condition-case nil
 	    (require 'easymenu)
           (error nil))
-    (easy-menu-define mdc-mode-menu-symbol
+    (easy-menu-define modelica-mode-menu-symbol
       modelica-mode-map
       "Menu for Modelica mode"
-      mdc-mode-menu)
-    (easy-menu-add mdc-mode-menu-symbol modelica-mode-map)))
+      modelica-mode-menu)
+    (easy-menu-add modelica-mode-menu-symbol modelica-mode-map)))
 
-(defun mdc-indent-for-comment ()
+(defun modelica-indent-for-comment ()
   "Indent this line's comment to `comment-column', or insert an empty comment."
   (interactive)
   (indent-for-comment)
-  (mdc-indent-line))
+  (modelica-indent-line))
 
-(defun mdc-indent-for-docstring ()
+(defun modelica-indent-for-docstring ()
   "Indent this statement's documentation string to `comment-column'.
 Insert an empty documentation string if necessary."
   (interactive)
@@ -402,7 +402,7 @@ Insert an empty documentation string if necessary."
     (skip-chars-forward " \t")
     (condition-case nil
 	(progn
-	  (mdc-forward-statement)
+	  (modelica-forward-statement)
 	  (forward-comment (- (point-max))))
       (error
        (progn
@@ -428,8 +428,8 @@ Insert an empty documentation string if necessary."
 	  (forward-char 1)
 	  (insert deleted)
 	  (forward-char (- (1+ (length deleted))))
-	  (mdc-within-string t)
-	  (while (mdc-behind-string t))
+	  (modelica-within-string t)
+	  (while (modelica-behind-string t))
 	  (setq save-point (point))
 	  (skip-chars-backward " \t")
 	  (delete-region (point) save-point)
@@ -440,36 +440,36 @@ Insert an empty documentation string if necessary."
       (indent-to (max comment-column (1+ (current-column))))
       (insert (concat "\"\"" deleted))
       (forward-char (- (1+ (length deleted))))))
-  (mdc-indent-line))
+  (modelica-indent-line))
 
-(defun mdc-indent-new-comment-line ()
+(defun modelica-indent-new-comment-line ()
   "Indent new comment line for Modelica mode.
 Same behavior as `indent-new-comment-line', but additionally
 considers documentation strings."
   (interactive)
-  (mdc-indent-line)
+  (modelica-indent-line)
   (let (starter)
     (cond
      ;; treat documentation string
-     ((mdc-within-string)
+     ((modelica-within-string)
       (insert "\"\n\""))
      ;; adapt comment-multi-line and
      ;; call default indent-new-comment-line
      (t
-      (setq starter (mdc-within-comment))
+      (setq starter (modelica-within-comment))
       (if (equal starter "/*")
 	  (setq comment-multi-line t)
 	(setq comment-multi-line nil))
       (indent-new-comment-line))))
-  (mdc-indent-line))
+  (modelica-indent-line))
 
-(defun mdc-indent-line ()
+(defun modelica-indent-line ()
   "Indentation for Modelica."
   (let ((pos (- (point-max) (point))) beg beg-anno end-anno)
     (beginning-of-line)
     (setq beg (point))
     ;; no indentation of invisible text (hidden annotations)
-    (if (mdc-within-overlay 'invisible)
+    (if (modelica-within-overlay 'invisible)
 	()
       ;; no indentation if preceeding newline is quoted
       (if (and (> (point) 2)
@@ -480,7 +480,7 @@ considers documentation strings."
 	;; else indent line
 	(goto-char beg)
 	(skip-chars-forward " \t")
-	(let ((indent (mdc-calculate-indent)))
+	(let ((indent (modelica-calculate-indent)))
 	  (if (= indent (current-column))
 	      ;; nothing to be done
 	      ()
@@ -490,7 +490,7 @@ considers documentation strings."
     (if (> (- (point-max) pos) (point))
 	(goto-char (- (point-max) pos)))))
 
-(defun mdc-calculate-indent ()
+(defun modelica-calculate-indent ()
   "Calculate indentation for current line.
 Assumes point to be over the first non-blank of the line."
   (save-excursion
@@ -499,18 +499,18 @@ Assumes point to be over the first non-blank of the line."
 	  ref-point ref-column)
       (cond
        ;; multi-line comment has fixed indentation, relative to its start
-       ((mdc-within-comment t)
+       ((modelica-within-comment t)
 	(setq ref-column (current-column))
 	(goto-char save-point)
 	(if (looking-at "\\*/")
 	    ref-column
-	  (+ ref-column mdc-comment-offset)))
+	  (+ ref-column modelica-comment-offset)))
        ;; concatenation of strings
        ((and (looking-at "\"")
-	     (mdc-behind-string t))
+	     (modelica-behind-string t))
 	;; move point to the very first string constant
 	;; in order to consider concatenation on the same line
-	(while (mdc-behind-string t))
+	(while (modelica-behind-string t))
 	(current-column))
        ;; continued single-line comment
        ((and (looking-at "//")
@@ -520,7 +520,7 @@ Assumes point to be over the first non-blank of the line."
        ;; default looks for last unended begin-like statement
        (t
 	(goto-char save-point) ; needed after check for singele-line comments
-	(setq offset mdc-basic-offset)
+	(setq offset modelica-basic-offset)
 	;; goto left for labels, end's etc.
 	(if (looking-at
 	     (concat
@@ -529,37 +529,37 @@ Assumes point to be over the first non-blank of the line."
 	      "\\(algorithm\\|e\\(lse\\(if\\|when\\)\\|nd\\|quation\\|"
 	      "xternal\\)\\|in\\|loop\\|p\\(rotected\\|ublic\\)\\)"
 	      "\\>"))
-	    (setq offset (- offset mdc-basic-offset)))
+	    (setq offset (- offset modelica-basic-offset)))
 	(if (and
 	     (looking-at
 	      (concat
 	       ; ("else" "then")
 	       "\\(else\\|then\\)"
 	       "\\>"))
-	     (not (mdc-within-equation)))
-	    (setq offset (- offset mdc-basic-offset)))
+	     (not (modelica-within-equation)))
+	    (setq offset (- offset modelica-basic-offset)))
 	(condition-case nil
 	    (progn
-	      (mdc-last-unended-begin t)
+	      (modelica-last-unended-begin t)
 	      ;; correct offset
 	      (if (looking-at "end\\>")
 		  ;; found an 'end', means no basic offset
-		  (setq offset (- offset mdc-basic-offset)))
+		  (setq offset (- offset modelica-basic-offset)))
 	      ;; check indentation in statements
 	      (setq ref-column (current-column))
 	      (setq ref-point (point))
 	      (goto-char save-point)
-	      (mdc-statement-start ref-point)
+	      (modelica-statement-start ref-point)
 	      (if (>= (point) save-point)
 		  ;; indent relative to ref-point as new statement starts
 		  (max 0 (+ ref-column offset))
-		;; else add mdc-statement-offset
+		;; else add modelica-statement-offset
 		;; provided that point is behind ref-point
 		;; and point is not within a begin-like statement
 		(if (and (> (point) ref-point)
-			 (not (and (mdc-forward-begin)
+			 (not (and (modelica-forward-begin)
 				   (> (point) save-point))))
-		    (setq offset (+ offset mdc-statement-offset)))
+		    (setq offset (+ offset modelica-statement-offset)))
 		(setq last-open
 			(car (cdr (parse-partial-sexp (point) save-point))))
 		(if (not last-open)
@@ -568,20 +568,20 @@ Assumes point to be over the first non-blank of the line."
 		  (+ 1 (current-column)))))
 	  (error 0)))))))
 
-(defun mdc-empty-line ()
+(defun modelica-empty-line ()
   "Return t if current line is empty, else return nil."
   (save-excursion
     (beginning-of-line)
     (skip-chars-forward " \t")
     (eolp)))
 
-(defun mdc-within-comment (&optional move-point)
+(defun modelica-within-comment (&optional move-point)
   "Return comment starter if point is within a comment, nil otherwise.
 Optionally move point to the beginning of the comment if
 MOVE-POINT is true."
   (let ((starter nil) (save-point (point)))
     ;; check single-line comment
-    (setq starter (mdc-within-single-line-comment move-point))
+    (setq starter (modelica-within-single-line-comment move-point))
     (if (not starter)
 	;; check multi-line comment
 	(condition-case nil
@@ -589,7 +589,7 @@ MOVE-POINT is true."
 		     (looking-at "/\\*"))
 		;; check if we arrived in a single-line comment
 		(if (progn (forward-char)
-			   (mdc-within-single-line-comment move-point))
+			   (modelica-within-single-line-comment move-point))
 		    ;; then the original starting point is not a comment
 		    ()
 		  ;; else accept multi-line comment
@@ -601,7 +601,7 @@ MOVE-POINT is true."
     (goto-char save-point)
     starter))
 
-(defun mdc-within-single-line-comment (&optional move-point)
+(defun modelica-within-single-line-comment (&optional move-point)
   "Return comment starter if point is within a single-line comment.
 Return nil otherwise.  Optionally move point to the beginning of
 the comment if MOVE-POINT is true."
@@ -617,7 +617,7 @@ the comment if MOVE-POINT is true."
     (goto-char save-point)
     starter))
 
-(defun mdc-within-string (&optional move-point)
+(defun modelica-within-string (&optional move-point)
   "Return t if point is within a string constant, nil otherwise.
 Optionally move point to the starting double quote of the string
 if MOVE-POINT is true."
@@ -652,7 +652,7 @@ if MOVE-POINT is true."
 	(goto-char save-point))
       within-string)))
 
-(defun mdc-behind-string (&optional move-point)
+(defun modelica-behind-string (&optional move-point)
   "Check for string concatenation.
 Return t if only blanks are between point and the preceeding
 string constant, nil otherwise.  Optionally move point to the
@@ -666,14 +666,14 @@ true."
 	       (if (> (point) 1)
 		   (forward-char -1))
 	       (looking-at "\""))
-	     (mdc-within-string move-point))
+	     (modelica-within-string move-point))
 	(setq behind-string t))
     (if (or (not move-point)
 	    (not behind-string))
 	(goto-char save-point))
     behind-string))
 
-(defun mdc-within-matrix-expression (&optional move-point)
+(defun modelica-within-matrix-expression (&optional move-point)
   "Return t if an opening bracket is found backwards from point.
 Return nil otherwise; optionally move point to the bracket if
 MOVE-POINT is true."
@@ -682,7 +682,7 @@ MOVE-POINT is true."
 	(progn
 	  (while (progn
 		   (re-search-backward "[\]\[]")
-		   (mdc-within-comment t)))
+		   (modelica-within-comment t)))
 	  (if (looking-at "[\[]")
 	      (progn
 		(setq matrix-expression t)
@@ -692,7 +692,7 @@ MOVE-POINT is true."
     (goto-char save-point)
     matrix-expression))
 
-(defun mdc-within-equation (&optional move-point)
+(defun modelica-within-equation (&optional move-point)
   "Return t if point is within right hand side of an equation, nil otherwise.
 Optionally move point to the identifying '=' or ':=' if
 MOVE-POINT is true."
@@ -702,7 +702,7 @@ MOVE-POINT is true."
 	  (while (progn
 		   (re-search-backward
 		    (concat "\\([^=]:?=[^=]\\)\\|;"))
-		   (mdc-within-comment)))
+		   (modelica-within-comment)))
 	  (if (looking-at ";")
 	      (setq equation nil)
 	    (setq equation t)
@@ -714,7 +714,7 @@ MOVE-POINT is true."
     (goto-char save-point)
     equation))
 
-(defun mdc-statement-start (&optional ref-point)
+(defun modelica-statement-start (&optional ref-point)
   "Move point to the first character of the current statement.
 The optional argument REF-POINT points to the last end or unended
 begin."
@@ -722,7 +722,7 @@ begin."
     (if ref-point
 	()
       (condition-case nil
-	  (mdc-last-unended-begin t)
+	  (modelica-last-unended-begin t)
 	(error (goto-char (point-min))))
       (setq ref-point (point))
       (goto-char save-point))
@@ -741,21 +741,21 @@ begin."
 	      ref-point 'no-error)
 	     (and
 	      (> (point) ref-point)
-	      (or (mdc-within-comment t)
-		  (mdc-within-string)
+	      (or (modelica-within-comment t)
+		  (modelica-within-string)
 		  (if (looking-at "[\]\)]")
 		      (progn
 			(forward-char 1)
 			(forward-sexp -1)
 			t))
 		  (if (looking-at ";")
-		      (mdc-within-matrix-expression t)
-		    (mdc-within-equation t))))))
+		      (modelica-within-matrix-expression t)
+		    (modelica-within-equation t))))))
     (cond
      ((= (point) ref-point)
       ;; we arrived at last unended begin,
       ;; but might be looking for first statement of block
-      (mdc-forward-begin)
+      (modelica-forward-begin)
       (forward-comment (- (buffer-size)))
       (if (> (point) save-point)
 	  (goto-char ref-point)))
@@ -765,20 +765,20 @@ begin."
       (forward-word 1)))
     (forward-comment (buffer-size))))
 
-(defun mdc-short-class-definition ()
+(defun modelica-short-class-definition ()
   "Return t if point is over a short class definition."
   (looking-at (concat
-	       "\\(" mdc-class-modifier-keyword "\\)*"
-	       mdc-class-keyword
+	       "\\(" modelica-class-modifier-keyword "\\)*"
+	       modelica-class-keyword
 	       "[A-Za-z_][0-9A-Za-z_]*[ \t\n\r]+=")))
 
-(defun mdc-end-ident ()
+(defun modelica-end-ident ()
   "Return t if last word is an 'end'."
   (save-excursion
     (forward-word -1)
     (looking-at "end\\>")))
 
-(defun mdc-last-unended-begin (&optional indentation-only)
+(defun modelica-last-unended-begin (&optional indentation-only)
   "Position point at last unended begin.
 Raise an error if nothing found.  If INDENTATION-ONLY is true,
 position point at last begin or end."
@@ -796,11 +796,11 @@ position point at last begin or end."
 		 "f\\(or\\|unction\\)\\|if\\|model\\|package\\|"
 		 "record\\|type\\|wh\\(en\\|ile\\)\\)"
 		 "\\>"))
-	       (or (mdc-within-comment t)
-		   (mdc-short-class-definition)
-		   (mdc-within-string)
-		   (mdc-end-ident)
-		   (and (looking-at "if") (mdc-within-equation t)))))
+	       (or (modelica-within-comment t)
+		   (modelica-short-class-definition)
+		   (modelica-within-string)
+		   (modelica-end-ident)
+		   (and (looking-at "if") (modelica-within-equation t)))))
       (if (looking-at "end\\>")
 	  (if indentation-only
 	      (setq depth -1)
@@ -812,12 +812,12 @@ position point at last begin or end."
 	  (while (progn
 		   (forward-word -1)
 		   (and
-		    (looking-at mdc-class-modifier-keyword)
-		    (not (mdc-within-comment))))
+		    (looking-at modelica-class-modifier-keyword)
+		    (not (modelica-within-comment))))
 	    (setq save-point (point)))
 	  (goto-char save-point)))))
 
-(defun mdc-forward-begin ()
+(defun modelica-forward-begin ()
   "Move point forward over a begin-like statement.
 Return block ident (string) or nil if not found.
    Point is assumed over the start of the begin-like statement upon call."
@@ -827,22 +827,22 @@ Return block ident (string) or nil if not found.
       (setq ident (buffer-substring (match-beginning 0) (match-end 0)))
       (while (progn
 	       (re-search-forward "\\<loop\\>")
-	       (mdc-within-comment))))
+	       (modelica-within-comment))))
      ;;(regexp-opt '("if" "elseif" "when" "elsewhen"))
      ((looking-at "\\(else\\(if\\|when\\)\\|if\\|when\\)\\>")
       (setq ident (buffer-substring (match-beginning 0) (match-end 0)))
       (while (progn
 	       (re-search-forward "\\<then\\>")
-	       (mdc-within-comment))))
+	       (modelica-within-comment))))
      ((looking-at
-       (concat "\\(" mdc-class-modifier-keyword "\\)\\|"
-	       "\\(" mdc-class-keyword "\\)"))
+       (concat "\\(" modelica-class-modifier-keyword "\\)\\|"
+	       "\\(" modelica-class-keyword "\\)"))
       ;; move over class modifiers
-      (while (looking-at mdc-class-modifier-keyword)
+      (while (looking-at modelica-class-modifier-keyword)
 	(forward-word 1)
 	(forward-comment (buffer-size)))
       ;; check and move over class specifier
-      (if (not (looking-at mdc-class-keyword))
+      (if (not (looking-at modelica-class-keyword))
 	  (goto-char save-point)
 	(forward-word 1)
 	(forward-comment (buffer-size))
@@ -866,27 +866,27 @@ Return block ident (string) or nil if not found.
     (forward-comment (buffer-size))
     ident))
 
-(defun mdc-newline-and-indent ()
+(defun modelica-newline-and-indent ()
   "Indent current line before calling `newline-and-indent'."
   (interactive)
-  (mdc-indent-line)
+  (modelica-indent-line)
   (newline-and-indent))
 
-(defun mdc-insert-end ()
+(defun modelica-insert-end ()
   "Insert end statement for current block."
   (interactive)
   (let ((case-fold-search nil)
 	indentation (save-point (point)) (block-start nil) (end-ident ""))
     (save-excursion
       (condition-case nil
-	  (mdc-last-unended-begin)
+	  (modelica-last-unended-begin)
 	(error (error "Couldn't find unended begin")))
       (setq indentation (current-column))
-      (setq end-ident (mdc-forward-begin))
+      (setq end-ident (modelica-forward-begin))
       (if (<= save-point (point))
 	  (setq block-start t)))
     ;; insert newline or clear up an empty line
-    (if (not (mdc-empty-line))
+    (if (not (modelica-empty-line))
 	(insert "\n")
       (setq save-point (point))
       (beginning-of-line)
@@ -901,39 +901,39 @@ Return block ident (string) or nil if not found.
       (end-of-line))
     ;; insert newline
     (insert "\n")
-    (mdc-indent-line)))
+    (modelica-indent-line)))
 
 ;; active regions, and auto-newline/hungry delete key
 ;; (copied from cc-mode.el)
-(defun mdc-keep-region-active ()
+(defun modelica-keep-region-active ()
   "Do whatever is necessary to keep the region active in XEmacs 19.
 Ignore byte-compiler warnings you might see."
   (and (boundp 'zmacs-region-stays)
        (setq zmacs-region-stays t)))
 
-(defun mdc-forward-statement ()
+(defun modelica-forward-statement ()
   "Move point to next beginning of a statement."
   (interactive)
-  (mdc-keep-region-active)
+  (modelica-keep-region-active)
   (let ((case-fold-search nil)
 	(save-point (point))
 	pos)
-    (mdc-statement-start)
+    (modelica-statement-start)
     (if (> (point) save-point)
 	;; ready after skipping leading comment or blanks
 	()
       ;; else move forward
       (setq save-point (point))
-      (if (mdc-forward-begin)
+      (if (modelica-forward-begin)
 	  ;; ready after moving over begin-like statement
 	  ()
 	;; move forward behind next ";" ending a statement
 	(while
 	    (progn
 	      (re-search-forward ";" (point-max) t)
-	      (or (mdc-within-comment)
-		  (mdc-within-string)
-		  (mdc-within-matrix-expression))))
+	      (or (modelica-within-comment)
+		  (modelica-within-string)
+		  (modelica-within-matrix-expression))))
 	(forward-comment (point-max))
 	(if (= (point) (point-max))
 	    (progn
@@ -947,15 +947,15 @@ Ignore byte-compiler warnings you might see."
 	    (forward-comment (- (point-max)))
 	    (if (> (point) (point-min))
 		(forward-char -1))
-	    (mdc-statement-start))
+	    (modelica-statement-start))
 	  (goto-char pos))))))
 
-(defun mdc-backward-statement ()
+(defun modelica-backward-statement ()
   "Move point to previous beginning of a statement."
   (interactive)
-  (mdc-keep-region-active)
+  (modelica-keep-region-active)
   (let ((case-fold-search nil) (save-point (point)))
-    (mdc-statement-start)
+    (modelica-statement-start)
     (if (< (point) save-point)
 	;; ready after having moved to start of current statement
 	()
@@ -964,11 +964,11 @@ Ignore byte-compiler warnings you might see."
       (forward-comment (- (point-max)))
       (if (> (point) (point-min))
 	  (forward-char -1))
-      (mdc-statement-start)
+      (modelica-statement-start)
       (if (= (point) save-point)
 	  (error "No previous statement")))))
 
-(defun mdc-forward-block (&optional arg)
+(defun modelica-forward-block (&optional arg)
   "Move point to next beginning of a block at the same nesting level.
 If no next block found on the same level move a level higher.
 
@@ -983,65 +983,65 @@ In interactive calls, ARG is the numeric prefix argument."
     (let ((save-point (point)))
       (condition-case nil
 	  (progn
-	    (mdc-to-block-begin)
+	    (modelica-to-block-begin)
 	    (if (> (point) save-point)
 		;; we moved already forward to a block begin
 		()
-	      (mdc-to-block-end)
-	      (mdc-forward-statement)
-	      (mdc-to-block-begin)
+	      (modelica-to-block-end)
+	      (modelica-forward-statement)
+	      (modelica-to-block-begin)
 	      (if (< (point) save-point)
-		  (mdc-forward-block))))
+		  (modelica-forward-block))))
 	;; in case of error and if we did move yet,
 	;; move forward one statement
 	(error (if (= (point) save-point)
-		   (mdc-forward-statement))))))
+		   (modelica-forward-statement))))))
    ((> arg 1)
     (dotimes (_i arg)
-      (mdc-forward-block 1)))
+      (modelica-forward-block 1)))
    ((<= arg 0)
-    (mdc-backward-block)
-    (mdc-forward-block (1+ arg)))))
+    (modelica-backward-block)
+    (modelica-forward-block (1+ arg)))))
 
-(defun mdc-backward-block ()
+(defun modelica-backward-block ()
   "Move point to previous beginning of a block at the same nesting level.
 If point is at the first block of the current level, move it a level higher."
   (interactive)
   (let ((save-point (point)))
     (condition-case nil
 	(progn
-	  (mdc-to-block-begin)
+	  (modelica-to-block-begin)
 	  (if (< (point) save-point)
 	      ;; we moved already backward to the beginning of a block
 	      ()
-	    (mdc-backward-statement)
-	    (mdc-to-block-begin)))
+	    (modelica-backward-statement)
+	    (modelica-to-block-begin)))
       ;; in case of error and if we did not move yet,
       ;; move backward one statement
       ;; and move to beginning of that block if one ends there
       (error (progn
 	       (if (= (point) save-point)
 		   (progn
-		     (mdc-backward-statement)
+		     (modelica-backward-statement)
 		     (if (looking-at "\\<end\\>")
-			 (mdc-to-block-begin)))))))))
+			 (modelica-to-block-begin)))))))))
 
-(defun mdc-to-block-begin ()
+(defun modelica-to-block-begin ()
   "Move point to beginning of current statement block."
   (interactive)
-  (mdc-keep-region-active)
+  (modelica-keep-region-active)
   (let ((case-fold-search nil)
 	(save-point (point)))
     (condition-case nil
 	(progn
-	  (mdc-statement-start)
-	  (mdc-forward-begin)
-	  (mdc-last-unended-begin))
+	  (modelica-statement-start)
+	  (modelica-forward-begin)
+	  (modelica-last-unended-begin))
       (error (progn
 	       (goto-char save-point)
 	       (error "No statement block"))))))
 
-(defun mdc-forward-block-end ()
+(defun modelica-forward-block-end ()
   "Skip block end and return its name.
 Do not move point if it is not at a block end."
   (let ((pt (point))
@@ -1069,22 +1069,22 @@ Do not move point if it is not at a block end."
 	 (setq ret nil)))
      ret)))
 
-(defun mdc-to-block-end (&rest _)
+(defun modelica-to-block-end (&rest _)
   "Move point to end of current statement block.
 
 Make usable for `hs-forward-sexp-func' by ignoring any arguments."
   (interactive)
-  (mdc-keep-region-active)
+  (modelica-keep-region-active)
   (let ((case-fold-search nil)
 	ident-stack
 	ident
 	(save-point (point)))
     (condition-case nil
 	(progn
-	  (mdc-statement-start)
-	  (mdc-forward-begin)
-	  (mdc-last-unended-begin)
-	  (setq ident (mdc-forward-begin))
+	  (modelica-statement-start)
+	  (modelica-forward-begin)
+	  (modelica-last-unended-begin)
+	  (setq ident (modelica-forward-begin))
 	  (unless ident
 	    (throw 'error nil))
 	  (setq ident-stack (list ident))
@@ -1092,16 +1092,16 @@ Make usable for `hs-forward-sexp-func' by ignoring any arguments."
 	      (progn
 		(comment-forward most-positive-fixnum)
 		(cond
-		 ((setq ident (mdc-forward-begin))
+		 ((setq ident (modelica-forward-begin))
 		  (push ident ident-stack)
 		  t)
-		 ((setq ident (mdc-forward-block-end))
+		 ((setq ident (modelica-forward-block-end))
 		  (unless (string-equal ident (car ident-stack))
 		    (throw 'error nil))
 		  (pop ident-stack)
 		  ident-stack)
 		 (t
-		  (mdc-forward-statement)
+		  (modelica-forward-statement)
 		  (null (eobp)))))))
       (error (progn
 	       (goto-char save-point)
@@ -1128,26 +1128,27 @@ Make usable for `hs-forward-sexp-func' by ignoring any arguments."
 ;;  - read-only property, to avoid modifications of hidden text,
 ;;    does not work with GNU Emacs
 ;;  --> we don't set intangible or read-only property
-(defun mdc-flag-region (from to flag)
+(defun modelica-flag-region (from to flag)
   "Hide or show lines from FROM to TO, according to FLAG.
 If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   (save-excursion
     (goto-char from)
-    (mdc-discard-overlays from to 'mdc-annotation)
+    (modelica-discard-overlays from to 'modelica-annotation)
     (if flag
 	(let ((o (make-overlay from to)))
-	  (overlay-put o 'invisible 'mdc-annotation)
+	  (overlay-put o 'invisible 'modelica-annotation)
 	  (overlay-put o 'isearch-open-invisible
-		       'mdc-isearch-open-invisible)))))
+		       'modelica-isearch-open-invisible)))))
 
-;; snarfed from outline.el (outline-isearch-open-invisible);
-;; Function to be set as an outline-isearch-open-invisible' property
-;; to the overlay that makes the outline invisible
-;; (see `mdc-flag-region').
-(defun mdc-isearch-open-invisible (overlay) ())
+;; snarfed from outline.el (outline-isearch-open-invisible)
+(defun modelica-isearch-open-invisible (_overlay)
+  "Helper Function for `modelica-flag-region'.
+This function is set as an `outline-isearch-open-invisible'
+property to the overlay that makes the outline invisible."
+  ())
 
 ;; snarfed from outline.el (outline-discard-overlays)
-(defun mdc-discard-overlays (beg end value)
+(defun modelica-discard-overlays (beg end value)
   "Discard all VALUE overlays between BEG and END."
   (if (< end beg)
       (setq beg (prog1 end (setq end beg))))
@@ -1180,11 +1181,11 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
 ;; test for overlay
 (if (not (functionp 'overlays-at))
     ;; XEmacs 21.1
-    (defun mdc-within-overlay (prop)
+    (defun modelica-within-overlay (prop)
       "Return overlay value if point is contained in an overlay
        with property prop, nil otherwise."
       (extent-at (point) (current-buffer) prop))
-  (defun mdc-within-overlay (prop)
+  (defun modelica-within-overlay (prop)
     "Return overlay value if point is contained in an overlay
      with property prop, nil otherwise."
     (let ((overlays (overlays-at (point)))
@@ -1196,7 +1197,7 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
 	(setq overlays (cdr overlays)))
       value)))
 
-(defun mdc-hide-annotations (beg end)
+(defun modelica-hide-annotations (beg end)
   "Hide all annotations between BEG and END."
   (save-excursion
     (let (beg-hide end-hide)
@@ -1208,49 +1209,49 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
 	(backward-char)
 	(forward-sexp)
 	(setq end-hide (- (point) 1))
-	(mdc-flag-region beg-hide end-hide t)))))
+	(modelica-flag-region beg-hide end-hide t)))))
 
-(defun mdc-show-annotations (beg end)
+(defun modelica-show-annotations (beg end)
   "Show annotations from BEG to END."
-  (mdc-flag-region beg end nil))
+  (modelica-flag-region beg end nil))
 
-(defun mdc-hide-all-annotations ()
+(defun modelica-hide-all-annotations ()
   "Hide all annotations."
   (interactive)
-  (mdc-hide-annotations (point-min) (point-max)))
+  (modelica-hide-annotations (point-min) (point-max)))
 
-(defun mdc-hide-annotation ()
+(defun modelica-hide-annotation ()
   "Hide annotation of current statement."
   (interactive)
   (save-excursion
     (let (beg end)
       ;; move to beginning of current statement
-      (mdc-statement-start)
+      (modelica-statement-start)
       (setq beg (point))
       ;; move to beginning of next statement
-      (mdc-forward-statement)
+      (modelica-forward-statement)
       (setq end (point))
       ;; hide annotations from beg to end
-      (mdc-hide-annotations beg end))))
+      (modelica-hide-annotations beg end))))
 
-(defun mdc-show-all-annotations ()
+(defun modelica-show-all-annotations ()
   "Show all annotations."
   (interactive)
-  (mdc-show-annotations (point-min) (point-max)))
+  (modelica-show-annotations (point-min) (point-max)))
 
-(defun mdc-show-annotation ()
+(defun modelica-show-annotation ()
   "Show annotation of current statement."
   (interactive)
   (save-excursion
     (let (beg end)
       ;; move to beginning of current statement
-      (mdc-statement-start)
+      (modelica-statement-start)
       (setq beg (point))
       ;; move to beginning of next statement
-      (mdc-forward-statement)
+      (modelica-forward-statement)
       (setq end (point))
       ;; show annotations from beg to end
-      (mdc-show-annotations beg end))))
+      (modelica-show-annotations beg end))))
 
 ;; Emacs by default assumes ".mo" as an extension for object files, similar to
 ;; ".o".  Assume that when the user loads modelica-mode, they want to remove
