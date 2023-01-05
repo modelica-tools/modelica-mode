@@ -109,6 +109,24 @@ some standard Emacs keybindings."
   :safe t
   :group 'modelica)
 
+(defcustom modelica-basic-offset 2
+  "Basic offset for indentation in Modelica Mode."
+  :type 'integer
+  :safe 'integerp
+  :group 'modelica)
+
+(defcustom modelica-comment-offset 3
+  "Offset for indentation in comments in Modelica Mode."
+  :type 'integer
+  :safe 'integerp
+  :group 'modelica)
+
+(defcustom modelica-statement-offset 2
+  "Offset for indentation in statements in Modelica Mode."
+  :type 'integer
+  :safe 'integerp
+  :group 'modelica)
+
 ;;; constants
 
 (defconst modelica-class-modifier-keyword
@@ -213,15 +231,6 @@ some standard Emacs keybindings."
 	       0 'font-lock-variable-name-face))))
 
 ;;; The mode
-
-(defvar modelica-basic-offset 2
-  "Basic offset for indentation in Modelica Mode.")
-
-(defvar modelica-comment-offset 3
-  "Offset for indentation in comments in Modelica Mode.")
-
-(defvar modelica-statement-offset 2
-  "Offset for indentation in statements in Modelica Mode.")
 
 (defvar modelica-mode-syntax-table nil
   "Syntax table used while in Modelica mode.")
