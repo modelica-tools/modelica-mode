@@ -65,7 +65,7 @@
 ;; Installation:
 ;; (1) Put the file
 ;;        modelica-mode.el
-;;     to an Emacs lisp directory, e.g. ~/elisp
+;;     to an Emacs Lisp directory, e.g. ~/elisp
 ;;
 ;; (2) Add the following lines to your ~/.emacs file
 ;;
@@ -77,12 +77,14 @@
 ;;     or by invoking
 ;;      M-x modelica-mode
 ;;
-;; (4) Optionally byte-compile the lisp code
+;; (4) Optionally byte-compile the Lisp code
 ;;
 ;; (5) Please send comments and suggestions to
 ;;     Ruediger Franke <rfranke@users.sourceforge.net>
 
 (require 'newcomment)
+
+;;; Code:
 
 (defconst modelica-mode-version "1.4.1")
 
@@ -98,9 +100,9 @@
   :group 'modelica)
 
 (defcustom modelica-use-emacs-keybindings t
-  "Choose whether to use emacs standard or original keybindings.
+  "Choose whether to use Emacs standard or original keybindings.
 If true, use keybindings similar to other programming modes.  If
-false, use original modelica-mode keybindings; those override
+false, use original `modelica-mode' keybindings; those override
 some standard Emacs keybindings.")
 
 ;;; constants
@@ -116,7 +118,7 @@ some standard Emacs keybindings.")
 ;;; Interface to font-lock
 
 (defvar mdc-font-lock-keywords nil
-  "Keywords to highlight for Modelica. See variable `font-lock-keywords'.")
+  "Keywords to highlight for Modelica.  See variable `font-lock-keywords'.")
 
 (if mdc-font-lock-keywords
     ()
@@ -215,13 +217,13 @@ some standard Emacs keybindings.")
 ;;; The mode
 
 (defvar mdc-basic-offset 2
-  "*basic offset for indentation in Modelica Mode")
+  "Basic offset for indentation in Modelica Mode.")
 
 (defvar mdc-comment-offset 3
-  "*offset for indentation in comments in Modelica Mode")
+  "Offset for indentation in comments in Modelica Mode.")
 
 (defvar mdc-statement-offset 2
-  "*offset for indentation in statements in Modelica Mode")
+  "Offset for indentation in statements in Modelica Mode.")
 
 (defvar mdc-mode-syntax-table nil
   "Syntax table used while in Modelica mode.")
@@ -386,15 +388,14 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     (easy-menu-add mdc-mode-menu-symbol modelica-mode-map)))
 
 (defun mdc-indent-for-comment ()
-  "Indent this line's comment to comment-column,
-   or insert an empty comment."
+  "Indent this line's comment to `comment-column', or insert an empty comment."
   (interactive)
   (indent-for-comment)
   (mdc-indent-line))
 
 (defun mdc-indent-for-docstring ()
-  "Indent this statement's documentation string to comment-column,
-   or insert an empty documentation string."
+  "Indent this statement's documentation string to `comment-column'.
+Insert an empty documentation string if necessary."
   (interactive)
   (let ((deleted "") save-point)
     ;; move behind current statement
@@ -442,8 +443,9 @@ This keymap tries to adhere to Emacs keybindings conventions.")
   (mdc-indent-line))
 
 (defun mdc-indent-new-comment-line ()
-  "indent-new-comment-line for Modelica mode. The function additionally
-   considers documentation strings"
+  "Indent new comment line for Modelica mode.
+Same behavior as `indent-new-comment-line', but additionally
+considers documentation strings."
   (interactive)
   (mdc-indent-line)
   (let (starter)
@@ -489,8 +491,8 @@ This keymap tries to adhere to Emacs keybindings conventions.")
 	(goto-char (- (point-max) pos)))))
 
 (defun mdc-calculate-indent ()
-  "Calculate indentation for current line;
-   assumes point to be over the first non-blank of the line"
+  "Calculate indentation for current line.
+Assumes point to be over the first non-blank of the line."
   (save-excursion
     (let ((case-fold-search nil)
 	  offset (last-open nil) (save-point (point))
@@ -567,15 +569,16 @@ This keymap tries to adhere to Emacs keybindings conventions.")
 	  (error 0)))))))
 
 (defun mdc-empty-line ()
-  "Return t if current line is empty, else return nil"
+  "Return t if current line is empty, else return nil."
   (save-excursion
     (beginning-of-line)
     (skip-chars-forward " \t")
     (eolp)))
 
 (defun mdc-within-comment (&optional move-point)
-  "Return comment starter if point is within a comment, nil otherwise;
-   optionally move point to the beginning of the comment"
+  "Return comment starter if point is within a comment, nil otherwise.
+Optionally move point to the beginning of the comment if
+MOVE-POINT is true."
   (let ((starter nil) (save-point (point)))
     ;; check single-line comment
     (setq starter (mdc-within-single-line-comment move-point))
@@ -599,8 +602,9 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     starter))
 
 (defun mdc-within-single-line-comment (&optional move-point)
-  "Return comment starter if point is within a single-line comment,
-   nil otherwise; optionally move point to the beginning of the comment"
+  "Return comment starter if point is within a single-line comment.
+Return nil otherwise.  Optionally move point to the beginning of
+the comment if MOVE-POINT is true."
   (let ((starter nil) (save-point (point)))
     ;; check single-line comment
     (condition-case nil
@@ -614,8 +618,9 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     starter))
 
 (defun mdc-within-string (&optional move-point)
-  "Return t if point is within a string constant, nil otherwise;
-   optionally move point to the starting double quote of the string"
+  "Return t if point is within a string constant, nil otherwise.
+Optionally move point to the starting double quote of the string
+if MOVE-POINT is true."
   (if (and (boundp 'font-lock-mode) font-lock-mode)
       ;; use result of font-lock-mode to also cover multi-line strings
       (let (within-string)
@@ -648,9 +653,11 @@ This keymap tries to adhere to Emacs keybindings conventions.")
       within-string)))
 
 (defun mdc-behind-string (&optional move-point)
-  "Check for string concatenation. Return t if only blanks are between point
-   and the preceeding string constant, nil otherwise. Optionally move point
-   to the starting double quote of the preceeding string."
+  "Check for string concatenation.
+Return t if only blanks are between point and the preceeding
+string constant, nil otherwise.  Optionally move point to the
+starting double quote of the preceeding string if MOVE-POINT is
+true."
   (let ((behind-string nil)
 	(save-point (point)))
     (if (and (> (point) 1)
@@ -667,8 +674,9 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     behind-string))
 
 (defun mdc-within-matrix-expression (&optional move-point)
-  "Return t if an opening bracket is found backwards from point,
-   nil otherwise; optionally move point to the bracket"
+  "Return t if an opening bracket is found backwards from point.
+Return nil otherwise; optionally move point to the bracket if
+MOVE-POINT is true."
   (let ((save-point (point)) (matrix-expression nil))
     (condition-case nil
 	(progn
@@ -685,8 +693,9 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     matrix-expression))
 
 (defun mdc-within-equation (&optional move-point)
-  "return t if point is within right hand side of an equation, nil otherwise;
-   optionally move point to the identifying '=' or ':='"
+  "Return t if point is within right hand side of an equation, nil otherwise.
+Optionally move point to the identifying '=' or ':=' if
+MOVE-POINT is true."
   (let ((equation nil) (save-point (point)))
     (condition-case nil
 	(progn
@@ -706,8 +715,9 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     equation))
 
 (defun mdc-statement-start (&optional ref-point)
-  "Move point to the first character of the current statement;
-   optional argument points to the last end or unended begin"
+  "Move point to the first character of the current statement.
+The optional argument REF-POINT points to the last end or unended
+begin."
   (let ((save-point (point)))
     (if ref-point
 	()
@@ -756,22 +766,22 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     (forward-comment (buffer-size))))
 
 (defun mdc-short-class-definition ()
-  "return t if point is over a short class definition"
+  "Return t if point is over a short class definition."
   (looking-at (concat
 	       "\\(" mdc-class-modifier-keyword "\\)*"
 	       mdc-class-keyword
 	       "[A-Za-z_][0-9A-Za-z_]*[ \t\n\r]+=")))
 
 (defun mdc-end-ident ()
-  "return t if last word is an 'end'"
+  "Return t if last word is an 'end'."
   (save-excursion
     (forward-word -1)
     (looking-at "end\\>")))
 
 (defun mdc-last-unended-begin (&optional indentation-only)
-  "Position point at last unended begin;
-   raise an error if nothing found.
-   If indentation-only is true, then position point at last begin or end."
+  "Position point at last unended begin.
+Raise an error if nothing found.  If INDENTATION-ONLY is true,
+position point at last begin or end."
   ;; find last unended begin-like keyword
   (let ((depth 1))
     (while (>= depth 1)
@@ -809,7 +819,7 @@ This keymap tries to adhere to Emacs keybindings conventions.")
 
 (defun mdc-forward-begin ()
   "Move point forward over a begin-like statement.
-   Return block ident (string) or nil if not found.
+Return block ident (string) or nil if not found.
    Point is assumed over the start of the begin-like statement upon call."
   (let ((ident nil) (save-point (point)) start-point)
     (cond
@@ -857,7 +867,7 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     ident))
 
 (defun mdc-newline-and-indent ()
-  "Indent current line before calling 'newline-and-indent'"
+  "Indent current line before calling `newline-and-indent'."
   (interactive)
   (mdc-indent-line)
   (newline-and-indent))
@@ -870,7 +880,7 @@ This keymap tries to adhere to Emacs keybindings conventions.")
     (save-excursion
       (condition-case nil
 	  (mdc-last-unended-begin)
-	(error (error "Couldn't find unended begin.")))
+	(error (error "Couldn't find unended begin")))
       (setq indentation (current-column))
       (setq end-ident (mdc-forward-begin))
       (if (<= save-point (point))
@@ -896,13 +906,13 @@ This keymap tries to adhere to Emacs keybindings conventions.")
 ;; active regions, and auto-newline/hungry delete key
 ;; (copied from cc-mode.el)
 (defun mdc-keep-region-active ()
-  ;; Do whatever is necessary to keep the region active in
-  ;; XEmacs 19. ignore byte-compiler warnings you might see
+  "Do whatever is necessary to keep the region active in XEmacs 19.
+Ignore byte-compiler warnings you might see."
   (and (boundp 'zmacs-region-stays)
        (setq zmacs-region-stays t)))
 
 (defun mdc-forward-statement ()
-  "Move point to next beginning of a statement"
+  "Move point to next beginning of a statement."
   (interactive)
   (mdc-keep-region-active)
   (let ((case-fold-search nil)
@@ -941,7 +951,7 @@ This keymap tries to adhere to Emacs keybindings conventions.")
 	  (goto-char pos))))))
 
 (defun mdc-backward-statement ()
-  "Move point to previous beginning of a statement"
+  "Move point to previous beginning of a statement."
   (interactive)
   (mdc-keep-region-active)
   (let ((case-fold-search nil) (save-point (point)))
@@ -994,8 +1004,8 @@ In interactive calls, ARG is the numeric prefix argument."
     (mdc-forward-block (1+ arg)))))
 
 (defun mdc-backward-block ()
-  "Move point to previous beginning of a block at the same nesting level
-   or a level higher if no previous block found on the same level."
+  "Move point to previous beginning of a block at the same nesting level.
+If point is at the first block of the current level, move it a level higher."
   (interactive)
   (let ((save-point (point)))
     (condition-case nil
@@ -1017,7 +1027,7 @@ In interactive calls, ARG is the numeric prefix argument."
 			 (mdc-to-block-begin)))))))))
 
 (defun mdc-to-block-begin ()
-  "Move point to beginning of current statement block"
+  "Move point to beginning of current statement block."
   (interactive)
   (mdc-keep-region-active)
   (let ((case-fold-search nil)
@@ -1119,7 +1129,7 @@ Make usable for `hs-forward-sexp-func' by ignoring any arguments."
 ;;    does not work with GNU Emacs
 ;;  --> we don't set intangible or read-only property
 (defun mdc-flag-region (from to flag)
-  "Hides or shows lines from FROM to TO, according to FLAG.
+  "Hide or show lines from FROM to TO, according to FLAG.
 If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   (save-excursion
     (goto-char from)
@@ -1138,6 +1148,7 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
 
 ;; snarfed from outline.el (outline-discard-overlays)
 (defun mdc-discard-overlays (beg end value)
+  "Discard all VALUE overlays between BEG and END."
   (if (< end beg)
       (setq beg (prog1 end (setq end beg))))
   (save-excursion
@@ -1186,7 +1197,7 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
       value)))
 
 (defun mdc-hide-annotations (beg end)
-  "Hide all annotations."
+  "Hide all annotations between BEG and END."
   (save-excursion
     (let (beg-hide end-hide)
       (goto-char beg)
@@ -1200,16 +1211,16 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
 	(mdc-flag-region beg-hide end-hide t)))))
 
 (defun mdc-show-annotations (beg end)
-  "Show annotations from beg to end"
+  "Show annotations from BEG to END."
   (mdc-flag-region beg end nil))
 
 (defun mdc-hide-all-annotations ()
-  "Hide all annotations"
+  "Hide all annotations."
   (interactive)
   (mdc-hide-annotations (point-min) (point-max)))
 
 (defun mdc-hide-annotation ()
-  "Hide annotation of current statement"
+  "Hide annotation of current statement."
   (interactive)
   (save-excursion
     (let (beg end)
@@ -1223,12 +1234,12 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
       (mdc-hide-annotations beg end))))
 
 (defun mdc-show-all-annotations ()
-  "Show all annotations"
+  "Show all annotations."
   (interactive)
   (mdc-show-annotations (point-min) (point-max)))
 
 (defun mdc-show-annotation ()
-  "Show annotation of current statement"
+  "Show annotation of current statement."
   (interactive)
   (save-excursion
     (let (beg end)
