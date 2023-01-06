@@ -1,3 +1,20 @@
+2023-01-07: Release of modelica-mode version 2.0.0
+
+    - Rearchitected the code to follow Emacs conventions more closely:
+      - All functions and variables start with modelica- instead of mdc-
+      - C-h m now shows the list of keybindings
+      - modelica-mode now inherits from prog-mode
+      - Settings can be configured via M-x customize and overridden via file-
+        or dir-local variables
+    - Redesigned keybindings to follow the conventions of other major modes.
+      Set modelica-use-emacs-keybindings to nil to use the old keybindings,
+      except:
+      - Replaced C-c C-h with C-c C-a since Emacs uses <anything> C-h to show
+        help for available keystrokes
+    - Support for hideshow-minor-mode added
+    - oo-browser support is unmaintained (but left in the repository for now)
+    - Removed compatibility code for XEmacs
+
 04/25/01: Release of modelica-mode version 1.4.1
 
 04/25/01: modelica-mode.el, br-mdc.el
