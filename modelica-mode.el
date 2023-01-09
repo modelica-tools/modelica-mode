@@ -360,7 +360,7 @@ This keymap tries to adhere to Emacs keybindings conventions.")
             modelica-new-mode-map
           modelica-original-mode-map))
   (use-local-map modelica-mode-map)
-  (setq-local indent-line-function 'modelica-indent-line)
+  (setq-local indent-line-function #'modelica-indent-line)
   ;; comment syntax
   (setq-local comment-column 32
               comment-start "// "
@@ -431,7 +431,7 @@ Insert an empty documentation string if necessary."
       ;; insert new docstring
       (forward-char 1)
       (indent-to (max comment-column (1+ (current-column))))
-      (insert (concat "\"\"" deleted))
+      (insert "\"\"" deleted)
       (forward-char (- (1+ (length deleted))))))
   (modelica-indent-line))
 
@@ -886,7 +886,7 @@ Return block ident (string) or nil if not found.
       (delete-region (point) save-point))
     ;; insert proper end
     (indent-to indentation)
-    (insert (concat "end " end-ident ";"))
+    (insert "end " end-ident ";")
     ;; step back if block just starts
     (if (not block-start)
 	()
@@ -928,7 +928,7 @@ Ignore byte-compiler warnings you might see."
 		  (modelica-within-string)
 		  (modelica-within-matrix-expression))))
 	(forward-comment (point-max))
-	(if (= (point) (point-max))
+	(if (eobp)
 	    (progn
 	      (goto-char save-point)
 	      (error "No next statement"))
@@ -938,7 +938,7 @@ Ignore byte-compiler warnings you might see."
 	  (while (> (point) save-point)
 	    (setq pos (point))
 	    (forward-comment (- (point-max)))
-	    (if (> (point) (point-min))
+	    (if (not (bobp))
 		(forward-char -1))
 	    (modelica-statement-start))
 	  (goto-char pos))))))
@@ -955,7 +955,7 @@ Ignore byte-compiler warnings you might see."
       ;; else move backward
       (setq save-point (point))
       (forward-comment (- (point-max)))
-      (if (> (point) (point-min))
+      (if (not (bobp))
 	  (forward-char -1))
       (modelica-statement-start)
       (if (= (point) save-point)
@@ -1156,8 +1156,8 @@ property to the overlay that makes the outline invisible."
 
 ;; test for overlay
 (defun modelica-within-overlay (prop)
-  "Return overlay value if point is contained in an overlay with
-property PROP, nil otherwise."
+  "Overlay value when point is in an overlay with property PROP.
+If point is not in such an overlay, return nil."
     (let ((overlays (overlays-at (point)))
 	  (value nil)
 	  o)
