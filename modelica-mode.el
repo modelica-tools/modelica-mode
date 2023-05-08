@@ -249,7 +249,8 @@ some standard Emacs keybindings."
   (modify-syntax-entry ?/  ". 124b" modelica-mode-syntax-table)
 
   (modify-syntax-entry ?*  ". 23"   modelica-mode-syntax-table)
-  (modify-syntax-entry ?\n "> b"    modelica-mode-syntax-table))
+  (modify-syntax-entry ?\n "> b"    modelica-mode-syntax-table)
+  (modify-syntax-entry ?\' "\""    modelica-mode-syntax-table))
 
 (defvar modelica-original-mode-map
   (let ((map (make-sparse-keymap)))
